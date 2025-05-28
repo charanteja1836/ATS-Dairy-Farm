@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Admin Dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Top Section -->
+  <div class="top-section">
+    <div class="top-left">
+      <img src="https://www.google.com/u/0/ac/images/logo.gif?uid=102461851630621335199&service=google_gsuite" alt="ATS Logo" class="logo" />
+      <p class="para">Incredible Service, Incredible Right</p>
+    </div>
+
+    <div class="top-center">
+      <div class="search-wrapper">
+        <input type="text" placeholder="Search..." class="search" />
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+
+    <div class="top-right">
+      <button id="themeToggle" class="icon">🌙</button>
+      <div class="notification icon">
+        <i class="fas fa-bell"></i>
+        <span class="badge">3</span>
+      </div>
+      <div class="language">
+        <i class="fas fa-globe"></i> English <i class="fas fa-caret-down"></i>
+      </div>
+      <span class="status-dot"></span>
+      <span class="status">Active</span>
+      <div class="profile">
+        <img src="https://i.pravatar.cc/32" alt="Profile" />
+        <div class="guest-info">
+          <strong>Charan Teja</strong>
+          <span id="clock">00:00:00</span>
+        </div>
+      </div>
+      <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul class="menu">
+        <li class="active" data-section="home">
+          <i class="fas fa-home"></i> Home
+        </li>
+        <li data-section="crm">
+          <i class="fas fa-address-book"></i> CRM
+        </li>
+        <li data-section="farmer">
+          <i class="fas fa-tractor"></i> Farmer Management
+        </li>
+        <li data-section="milk">
+          <i class="fas fa-mug-hot"></i> Milk Collection
+        </li>
+        <li data-section="chilling">
+          <i class="fas fa-snowflake"></i> Chilling Centers
+        </li>
+        <li data-section="processing">
+          <i class="fas fa-industry"></i> Processing Plants
+        </li>
+        <li data-section="quality">
+          <i class="fas fa-vial"></i> Quality Control
+        </li>
+        <li data-section="inventory">
+          <i class="fas fa-boxes-stacked"></i> Inventory Management
+        </li>
+        <li data-section="distribution">
+          <i class="fas fa-truck"></i> Distribution
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Home (Default View) -->
+      <div id="home-content" class="dashboard-home">
+        <div class="filters">
+          <button class="active">Daily</button>
+          <button>Weekly</button>
+          <button>Monthly</button>
+          <button>Custom</button>
+        </div>
+
+        <section class="cards">
+          <div class="card">
+            <h2>Total Milk Procurement</h2>
+            <div class="chart-container"><canvas id="gauge1"></canvas></div>
+            <p class="value">250,000 L</p>
+            <p class="change up">↑ 12.5%</p>
+          </div>
+          <div class="card">
+            <h2>Total Sales Revenue</h2>
+            <div class="chart-container"><canvas id="gauge2"></canvas></div>
+            <p class="value">₹1,500,000</p>
+            <p class="change up">↑ 18.2%</p>
+          </div>
+          <div class="card">
+            <h2>Active Farmers</h2>
+            <div class="chart-container"><canvas id="gauge3"></canvas></div>
+            <p class="value">5,000+</p>
+            <p class="change up">↑ 5.7%</p>
+          </div>
+          <div class="card">
+            <h2>Distributors/Retailers</h2>
+            <div class="chart-container"><canvas id="gauge4"></canvas></div>
+            <p class="value">1,200</p>
+            <p class="change up">↑ 8.3%</p>
+          </div>
+          <div class="card">
+            <h2>Customer Growth Rate</h2>
+            <div class="chart-container"><canvas id="gauge5"></canvas></div>
+            <p class="value">10%</p>
+            <p class="change up">↑ 20.3%</p>
+          </div>
+          <div class="card">
+            <h2>Quality Metrics</h2>
+            <div class="chart-container"><canvas id="gauge6"></canvas></div>
+            <p class="value">95%</p>
+            <p class="change up">↑ 30%</p>
+          </div>
+          <div class="card">
+            <h2>Environmental Metrics</h2>
+            <div class="chart-container"><canvas id="gauge7"></canvas></div>
+            <p class="value">70%</p>
+            <p class="change up">↑ 16.7%</p>
+          </div>
+          <div class="card">
+            <h2>Employee Engagement</h2>
+            <div class="chart-container"><canvas id="gauge8"></canvas></div>
+            <p class="value">85%</p>
+            <p class="change up">↑ 36.5%</p>
+          </div>
+        </section>
+        <section class="charts-section">
+          <div class="chart-card">
+            <h3>Monthly Milk Production (L)</h3>
+            <canvas id="monthlyMilkChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Daily Milk Production (L)</h3>
+            <canvas id="dailyMilkChart"></canvas>
+          </div>
+        </section>
+      </div>
+
+      <!-- CRM Content -->
+      <div id="crm-content" class="content-section" style="display:none;">
+        <div class="crm-container">
+          <header class="crm-header">
+            <h2>Customer Relationship Management</h2>
+          </header>
+
+          <div class="crm-toolbar">
+            <div class="search-container">
+              <input type="text" placeholder="Search tickets..." id="searchInput">
+              <button id="searchBtn">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <button id="addTicketBtn" class="add-ticket-btn">
+              <i class="fas fa-plus"></i> Add Ticket
+            </button>
+          </div>
+
+          <section class="crm-cards">
+            <div class="crm-card">
+              <h4>Total Tickets</h4>
+              <p id="totalTickets">0</p>
+            </div>
+            <div class="crm-card">
+              <h4>Open Issues</h4>
+              <p id="openTickets">0</p>
+            </div>
+            <div class="crm-card">
+              <h4>Resolved</h4>
+              <p id="resolvedTickets">0%</p>
+            </div>
+            <div class="crm-card">
+              <h4>Avg. Resolution Time</h4>
+              <p>1.9 days</p>
+            </div>
+          </section>
+
+          <section class="ticket-section">
+            <h3>Recent Requests</h3>
+            <div id="ticketsContainer"></div>
+          </section>
+
+          <!-- Add Ticket Modal -->
+          <div id="ticketModal" class="modal">
+            <div class="modal-content">
+              <span class="close">×</span>
+              <h3>Add New Ticket</h3>
+              <form id="ticketForm">
+                <div class="form-group">
+                  <label for="customerName">Customer Name</label>
+                  <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                  <label for="ticketPriority">Priority</label>
+                  <select id="ticketPriority" required>
+                    <option value="low">Low</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="ticketMessage">Message</label>
+                  <textarea id="ticketMessage" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Submit Ticket</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Farmer Management Content -->
+      <div id="farmer-content" class="content-section" style="display:none;">
+        <div class="crm-container">
+          <header class="crm-header">
+            <h2 class="center-heading">Farmer Management Overview</h2>
+          </header>
+
+          <div class="cards">
+            <div class="card">
+              <h3>Total Registered Farmers</h3>
+              <p>5,200</p>
+            </div>
+            <div class="card">
+              <h3>Active Farmers</h3>
+              <p>4,860</p>
+            </div>
+            <div class="card">
+              <h3>KYC Verified</h3>
+              <p>4,980</p>
+            </div>
+            <div class="card">
+              <h3>Top Performing Region</h3>
+              <p>Andhra Pradesh</p>
+            </div>
+          </div>
+
+          <h2>Farmer Performance</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Farmer Name</th>
+                <th>Village</th>
+                <th>Milk Supplied (L)</th>
+                <th>Rating</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ramesh Kumar</td>
+                <td>Narsapuram</td>
+                <td>1250</td>
+                <td>
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </td>
+                <td>Active</td>
+              </tr>
+              <tr>
+                <td>Sita Devi</td>
+                <td>Guntur</td>
+                <td>1100</td>
+                <td>
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span style="color:#ccc">★</span>
+                </td>
+                <td>Inactive</td>
+              </tr>
+              <tr>
+                <td>Rajesh Yadav</td>
+                <td>Ongole</td>
+                <td>1340</td>
+                <td>
+                  <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                </td>
+                <td>Active</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="charts-container">
+            <div class="chart-box">
+              <h3>Farmer Engagement (Active vs Inactive)</h3>
+              <canvas id="donutChart"></canvas>
+            </div>
+            <div class="chart-box">
+              <h3>Milk Supplied per Region</h3>
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Milk Collection Content -->
+      <div id="milk-content" class="content-section" style="display:none;">
+        <div class="milk-container">
+          <h1>Milk Collection</h1>
+
+          <!-- Summary Cards -->
+          <div class="summary-cards">
+            <div class="summary-card purple">
+              <span class="value" id="totalSuppliersCard">142</span>
+              <span class="label">Total Suppliers</span>
+            </div>
+            <div class="summary-card blue">
+              <span class="value" id="todaysCollectionCard">1,840L</span>
+              <span class="label">Today's Collection</span>
+            </div>
+            <div class="summary-card green">
+              <span class="value" id="avgQualityCard">A-</span>
+              <span class="label">Avg. Quality</span>
+            </div>
+            <div class="summary-card red">
+              <span class="value" id="pendingPaymentsCard">₹84,500</span>
+              <span class="label">Pending Payments</span>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab active" data-tab="suppliers">Suppliers</button>
+            <button class="tab" data-tab="collection">Milk Collection</button>
+            <button class="tab" data-tab="quality">Quality Control</button>
+            <button class="tab" data-tab="payments">Payments</button>
+          </div>
+
+          <!-- Suppliers Tab -->
+          <section id="suppliers" class="tab-content active">
+            <div class="suppliers-header">
+              <h2>Supplier Management</h2>
+              <button id="addSupplierBtn" class="btn-purple"><i class="fas fa-plus"></i> Add Supplier</button>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>SUPPLIER ID</th>
+                    <th>NAME</th>
+                    <th>CONTACT</th>
+                    <th>LOCATION</th>
+                    <th>COWS</th>
+                    <th>AVG. YIELD</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="supplierTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Milk Collection Tab -->
+          <section id="collection" class="tab-content">
+            <h2>Milk Collection Entries</h2>
+
+            <div class="form-container">
+              <input type="date" id="milkDate" required>
+              <input type="number" id="milkQuantity" placeholder="Quantity (liters)" required>
+              <input type="number" id="milkFat" placeholder="Fat (%)" step="0.1" required>
+              <button id="addMilkBtn" class="btn-blue">Add Entry</button>
+              <button id="exportMilkBtn" class="btn-green">Export CSV</button>
+            </div>
+
+            <div class="totals">
+              <p>Total Quantity: <span id="totalQuantity">0</span> L</p>
+              <p>Average Fat: <span id="avgFat">0</span> %</p>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Quantity (L)</th>
+                    <th>Fat (%)</th>
+                  </tr>
+                </thead>
+                <tbody id="milkTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Quality Control Tab (Placeholder) -->
+          <section id="quality" class="tab-content placeholder">
+            <h2>Quality Control</h2>
+            <p>Coming soon…</p>
+          </section>
+
+          <!-- Payments Tab (Placeholder) -->
+          <section id="payments" class="tab-content placeholder">
+            <h2>Payments</h2>
+            <p>Coming soon…</p>
+          </section>
+
+          <!-- Supplier Modal -->
+          <div id="supplierModal" class="modal">
+            <div class="modal-content">
+              <span class="close">×</span>
+              <h3>Add Supplier</h3>
+              <form id="supplierForm">
+                <input type="text" id="spId" placeholder="Supplier ID" required>
+                <input type="text" id="spName" placeholder="Name" required>
+                <input type="text" id="spContact" placeholder="Contact" required>
+                <input type="text" id="spLocation" placeholder="Location" required>
+                <input type="number" id="spCows" placeholder="No. of Cows" required>
+                <input type="number" id="spYield" placeholder="Avg. Yield (L)" step="0.1" required>
+                <select id="spStatus" required>
+                  <option value="Active">Active</option>
+                  <option value="New">New</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+                <button type="submit" class="btn-purple">Save Supplier</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chilling Centers Content -->
+      <div id="chilling-content" class="content-section" style="display:none;">
+        <div class="chilling-container">
+          <h1>Chilling Centers</h1>
+
+          <!-- Metrics -->
+          <div class="metrics">
+            <div class="metric">
+              <div class="value" id="totalMilkReceived">0 L</div>
+              <div class="label">Total Milk Received</div>
+            </div>
+            <div class="metric">
+              <div class="value" id="storageUtilization">0%</div>
+              <div class="label">Storage Utilization</div>
+            </div>
+            <div class="metric">
+              <div class="value" id="avgTemp">0°C</div>
+              <div class="label">Average Temperature</div>
+            </div>
+            <div class="metric">
+              <div class="value" id="qualityIssues">0</div>
+              <div class="label">Quality Issues</div>
+            </div>
+          </div>
+
+          <!-- Accordion -->
+          <div class="accordion">
+            <div class="accordion-header" data-section="reception">
+              <span>Milk Reception</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+              <div class="records" id="receptionRecords"></div>
+              <div class="form">
+                <h4>Add New Batch</h4>
+                <form id="receptionForm">
+                  <input type="text" id="batchId" placeholder="Batch ID (e.g., BATCH-001)" required>
+                  <input type="text" id="batchSource" placeholder="Source" required>
+                  <input type="number" id="batchVolume" placeholder="Volume (L)" step="0.1" min="0" required>
+                  <select id="batchCenterId" required>
+                    <option value="" disabled selected>Select Chilling Center</option>
+                  </select>
+                  <select id="batchGrade" required>
+                    <option value="Accepted">Accepted</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                  <input type="number" id="batchWeight" placeholder="Weight (kg)" step="0.1" min="0" required>
+                  <input type="datetime-local" id="batchReceived" required>
+                  <textarea id="batchNotes" placeholder="Notes" rows="2"></textarea>
+                  <button type="submit" class="btn"><i class="fas fa-save"></i> Save</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion">
+            <div class="accordion-header" data-section="chilling">
+              <span>Chilling & Storage</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+              <div class="records" id="chillingRecords"></div>
+              <div class="form">
+                <h4>Add New Center</h4>
+                <form id="chillingForm">
+                  <input type="text" id="centerId" placeholder="Center ID (e.g., CC-001)" required>
+                  <input type="text" id="centerName" placeholder="Name" required>
+                  <input type="text" id="centerLocation" placeholder="Location" required>
+                  <input type="number" id="centerCapacity" placeholder="Capacity (L)" min="0" required>
+                  <input type="number" id="centerTemp" placeholder="Temp (°C)" step="0.1" min="0" max="6" required>
+                  <select id="centerStatus" required>
+                    <option value="Operational">Operational</option>
+                    <option value="Under Maintenance">Under Maintenance</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                  <button type="submit" class="btn"><i class="fas fa-save"></i> Save</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion">
+            <div class="accordion-header" data-section="dispatch">
+              <span>Dispatch</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+              <div class="records" id="dispatchRecords"></div>
+              <div class="form">
+                <h4>Add New Dispatch</h4>
+                <form id="dispatchForm">
+                  <input type="text" id="dispatchId" placeholder="Dispatch ID (e.g., DISP-001)" required>
+                  <input type="text" id="dispatchCenterId" placeholder="Center ID" required>
+                  <input type="number" id="dispatchQuantity" placeholder="Quantity (L)" step="0.1" min="0" required>
+                  <select id="dispatchTransport" required>
+                    <option value="Cans">Cans</option>
+                    <option value="Tanker">Tanker</option>
+                  </select>
+                  <input type="text" id="dispatchDestination" placeholder="Destination" required>
+                  <input type="datetime-local" id="dispatchTime" required>
+                  <select id="dispatchSanitization" required>
+                    <option value="Checked">Checked</option>
+                    <option value="Not Checked">Not Checked</option>
+                  </select>
+                  <textarea id="dispatchNotes" placeholder="Notes" rows="2"></textarea>
+                  <button type="submit" class="btn"><i class="fas fa-save"></i> Save</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion">
+            <div class="accordion-header" data-section="sampling">
+              <span>Sampling & Testing</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+              <div class="records" id="samplingRecords"></div>
+              <div class="form">
+                <h4>Add New Test</h4>
+                <form id="samplingForm">
+                  <input type="text" id="sampleId" placeholder="Sample ID (e.g., SAMP-001)" required>
+                  <select id="sampleStage" required>
+                    <option value="Reception">Reception</option>
+                    <option value="Storage">Storage</option>
+                    <option value="Dispatch">Dispatch</option>
+                  </select>
+                  <input type="text" id="sampleReference" placeholder="Batch/Center ID" required>
+                  <select id="sampleGrade" required>
+                    <option value="A">A</option>
+                    <option value="A-">A-</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                  </select>
+                  <input type="number" id="sampleFat" placeholder="Fat Content (%)" step="0.1" min="0" required>
+                  <input type="number" id="sampleMicrobial" placeholder="Microbial Count (CFU/mL)" min="0" required>
+                  <input type="date" id="sampleDate" required>
+                  <textarea id="sampleNotes" placeholder="Notes" rows="2"></textarea>
+                  <button type="submit" class="btn"><i class="fas fa-save"></i> Save</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="charts">
+            <div class="chart-container">
+              <h3>Milk Received by Source</h3>
+              <canvas id="receptionChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Temperature Trends</h3>
+              <canvas id="tempChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Processing Plants Content -->
+      <div id="processing-content" class="content-section" style="display:none;">
+        <div class="processing-container">
+          <h1>Processing Plants Dashboard</h1>
+
+          <!-- Overview Metrics -->
+          <div class="overview">
+            <div class="overview-card">
+              <div class="value" id="dailyOutput">0 L</div>
+              <div class="label">Daily Output</div>
+            </div>
+            <div class="overview-card">
+              <div class="value" id="uptime">0%</div>
+              <div class="label">Equipment Uptime</div>
+            </div>
+            <div class="overview-card">
+              <div class="value" id="defectRate">0%</div>
+              <div class="label">Defect Rate</div>
+            </div>
+            <div class="overview-card">
+              <div class="value" id="activeTasks">0</div>
+              <div class="label">Active Maintenance Tasks</div>
+            </div>
+          </div>
+
+          <!-- Equipment Status -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Equipment Status</h2>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="panel-content">
+              <div class="equipment-grid">
+                <div class="equipment-card">
+                  <h3>Homogenizer</h3>
+                  <div class="status running">Running</div>
+                </div>
+                <div class="equipment-card">
+                  <h3>Pasteurizer</h3>
+                  <div class="status maintenance">Maintenance</div>
+                </div>
+                <div class="equipment-card">
+                  <h3>Packaging Line</h3>
+                  <div class="status running">Running</div>
+                </div>
+                <div class="equipment-card">
+                  <h3>Storage Tank</h3>
+                  <div class="status offline">Offline</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Production Logs -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Production Logs</h2>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="panel-content">
+              <div class="filter-bar">
+                <input type="text" id="logFilter" placeholder="Filter by Batch ID...">
+                <select id="stageFilter">
+                  <option value="all">All Stages</option>
+                  <option value="reception">Reception</option>
+                  <option value="homogenization">Homogenization</option>
+                  <option value="pasteurization">Pasteurization</option>
+                  <option value="packaging">Packaging</option>
+                </select>
+                <button id="addLogBtn" class="btn-purple"><i class="fas fa-plus"></i> Add Log</button>
+              </div>
+              <div class="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Batch ID</th>
+                      <th>Stage</th>
+                      <th>Volume (L)</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="productionTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Maintenance Kanban Board -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Maintenance Tasks</h2>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="panel-content">
+              <button id="addTaskBtn" class="btn-purple"><i class="fas fa-plus"></i> Add Task</button>
+              <div class="kanban-board">
+                <div class="kanban-column" data-status="todo">
+                  <h3>To Do</h3>
+                  <div class="kanban-tasks" id="todoTasks"></div>
+                </div>
+                <div class="kanban-column" data-status="done">
+                  <h3>Done</h3>
+                  <div class="kanban-tasks" id="doneTasks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quality Assurance Report -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Quality Assurance</h2>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="panel-content">
+              <h3>Quality Metrics</h3>
+              <div class="chart-container">
+                <canvas id="qualityMetricsChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Equipment Status Snapshot -->
+          <div class="status-snapshot">
+            <h2>Equipment Status Snapshot</h2>
+            <div class="snapshot-card">
+              <div class="snapshot-card-inner">
+                <div class="snapshot-front running">
+                  <h3>Homogenizer</h3>
+                  <p>Running smoothly</p>
+                </div>
+                <div class="snapshot-back">
+                  <p>Check logs for details</p>
+                </div>
+              </div>
+            </div>
+            <div class="snapshot-card">
+              <div class="snapshot-card-inner">
+                <div class="snapshot-front maintenance">
+                  <h3>Pasteurizer</h3>
+                  <p>Under maintenance</p>
+                </div>
+                <div class="snapshot-back">
+                  <p>Review task status</p>
+                </div>
+              </div>
+            </div>
+            <div class="snapshot-card">
+              <div class="snapshot-card-inner">
+                <div class="snapshot-front running">
+                  <h3>Packaging Line</h3>
+                  <p>Operating normally</p>
+                </div>
+                <div class="snapshot-back">
+                  <p>Monitor production</p>
+                </div>
+              </div>
+            </div>
+            <div class="snapshot-card">
+              <div class="snapshot-card-inner">
+                <div class="snapshot-front offline">
+                  <h3>Storage Tank</h3>
+                  <p>Currently offline</p>
+                </div>
+                <div class="snapshot-back">
+                  <p>Inspect for issues</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modals -->
+          <div id="logModal" class="modal" role="dialog" aria-labelledby="logModalTitle" aria-hidden="true">
+            <div class="modal-content">
+              <span class="close" role="button" aria-label="Close modal">×</span>
+              <h3 id="logModalTitle">Add Production Log</h3>
+              <form id="logForm">
+                <input type="text" id="logBatchId" placeholder="Batch ID (e.g., BATCH-001)" required>
+                <select id="logStage" required>
+                  <option value="reception">Reception</option>
+                  <option value="homogenization">Homogenization</option>
+                  <option value="pasteurization">Pasteurization</option>
+                  <option value="packaging">Packaging</option>
+                </select>
+                <input type="number" id="logVolume" placeholder="Volume (L)" step="0.1" min="0" required>
+                <select id="logStatus" required>
+                  <option value="Completed">Completed</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Failed">Failed</option>
+                </select>
+                <input type="datetime-local" id="logDate" required>
+                <button type="submit" class="btn-purple">Save Log</button>
+              </form>
+            </div>
+          </div>
+
+          <div id="taskModal" class="modal" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
+            <div class="modal-content">
+              <span class="close" role="button" aria-label="Close modal">×</span>
+              <h3 id="taskModalTitle">Add Maintenance Task</h3>
+              <form id="taskForm">
+                <input type="text" id="taskId" placeholder="Task ID (e.g., TASK-001)" required>
+                <input type="text" id="taskEquipment" placeholder="Equipment" required>
+                <textarea id="taskDescription" placeholder="Description" required></textarea>
+                <select id="taskStatus" required>
+                  <option value="todo">To Do</option>
+                  <option value="done">Done</option>
+                </select>
+                <button type="submit" class="btn-purple">Save Task</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Quality Control Content -->
+      <div id="quality-content" class="content-section" style="display:none;">
+        <div class="container">
+          <div class="content">
+            <div class="nav-steps">
+              <div class="nav-step active" data-stage="Reception">Raw Milk Reception</div>
+              <div class="nav-step" data-stage="Pasteurization">Pasteurization</div>
+              <div class="nav-step" data-stage="Cleaning">Cleaning & Sanitation</div>
+              <div class="nav-step" data-stage="Packaging">Packaging & Labeling</div>
+              <div class="nav-step" data-stage="Traceability">Traceability & Recall</div>
+            </div>
+            <h1>Quality Control Process Dashboard</h1>
+            <div class="stage-card active" id="receptionCard">
+              <h2>Raw Milk Reception</h2>
+              <div class="stage-metrics">
+                <div class="metric">
+                  <span id="receptionSamples">0</span>
+                  <p>Samples Tested</p>
+                </div>
+                <div class="metric">
+                  <span id="receptionTPCIssues">0</span>
+                  <p>High TPC</p>
+                </div>
+              </div>
+              <div class="mini-chart">
+                <canvas id="receptionChart"></canvas>
+              </div>
+              <form class="stage-form" data-stage="Reception">
+                <div>
+                  <label for="receptionId">Sample ID:</label>
+                  <input type="text" id="receptionId" required>
+                </div>
+                <div>
+                  <label for="receptionBatch">Batch ID:</label>
+                  <input type="text" id="receptionBatch" required>
+                </div>
+                <div>
+                  <label for="receptionFat">Fat Content (%):</label>
+                  <input type="number" id="receptionFat" step="0.1" required>
+                </div>
+                <div>
+                  <label for="receptionTPC">TPC (CFU/mL):</label>
+                  <input type="number" id="receptionTPC" required>
+                </div>
+                <button type="submit">Log Test</button>
+              </form>
+              <div class="records" id="receptionRecords"></div>
+            </div>
+            <div class="stage-card" id="pasteurizationCard">
+              <h2>Pasteurization</h2>
+              <div class="stage-metrics">
+                <div class="metric">
+                  <span id="pasteurizationSamples">0</span>
+                  <p>Samples Tested</p>
+                </div>
+                <div class="metric">
+                  <span id="pasteurizationIssues">0</span>
+                  <p>Failures</p>
+                </div>
+              </div>
+              <div class="mini-chart">
+                <canvas id="pasteurizationChart"></canvas>
+              </div>
+              <form class="stage-form" data-stage="Pasteurization">
+                <div>
+                  <label for="pasteurizationId">Sample ID:</label>
+                  <input type="text" id="pasteurizationId" required>
+                </div>
+                <div>
+                  <label for="pasteurizationBatch">Batch ID:</label>
+                  <input type="text" id="pasteurizationBatch" required>
+                </div>
+                <div>
+                  <label for="pasteurizationPhosphatase">Phosphatase Test:</label>
+                  <select id="pasteurizationPhosphatase" required>
+                    <option value="Pass">Pass</option>
+                    <option value="Fail">Fail</option>
+                  </select>
+                </div>
+                <button type="submit">Log Test</button>
+              </form>
+              <div class="records" id="pasteurizationRecords"></div>
+            </div>
+            <div class="stage-card" id="cleaningCard">
+              <h2>Cleaning & Sanitation</h2>
+              <div class="stage-metrics">
+                <div class="metric">
+                  <span id="cleaningSamples">0</span>
+                  <p>Tests Logged</p>
+                </div>
+                <div class="metric">
+                  <span id="cleaningIssues">0</span>
+                  <p>High TPC</p>
+                </div>
+              </div>
+              <div class="mini-chart">
+                <canvas id="cleaningChart"></canvas>
+              </div>
+              <form class="stage-form" data-stage="Cleaning">
+                <div>
+                  <label for="cleaningId">Test ID:</label>
+                  <input type="text" id="cleaningId" required>
+                </div>
+                <div>
+                  <label for="cleaningBatch">Batch ID:</label>
+                  <input type="text" id="cleaningBatch" required>
+                </div>
+                <div>
+                  <label for="cleaningTPC">TPC (CFU/mL):</label>
+                  <input type="number" id="cleaningTPC" required>
+                </div>
+                <button type="submit">Log Test</button>
+              </form>
+              <div class="records" id="cleaningRecords"></div>
+            </div>
+            <div class="stage-card" id="packagingCard">
+              <h2>Packaging & Labeling</h2>
+              <div class="stage-metrics">
+                <div class="metric">
+                  <span id="packagingSamples">0</span>
+                  <p>Samples Tested</p>
+                </div>
+                <div class="metric">
+                  <span id="packagingIssues">0</span>
+                  <p>Defects</p>
+                </div>
+              </div>
+              <div class="mini-chart">
+                <canvas id="packagingChart"></canvas>
+              </div>
+              <form class="stage-form" data-stage="Packaging">
+                <div>
+                  <label for="packagingId">Sample ID:</label>
+                  <input type="text" id="packagingId" required>
+                </div>
+                <div>
+                  <label for="packagingBatch">Batch ID:</label>
+                  <input type="text" id="packagingBatch" required>
+                </div>
+                <div>
+                  <label for="packagingStatus">Packaging Status:</label>
+                  <select id="packagingStatus" required>
+                    <option value="Pass">Pass</option>
+                    <option value="Fail">Fail</option>
+                  </select>
+                </div>
+                <button type="submit">Log Test</button>
+              </form>
+              <div class="records" id="packagingRecords"></div>
+            </div>
+            <div class="stage-card" id="traceabilityCard">
+              <h2>Traceability & Recall</h2>
+              <div class="stage-metrics">
+                <div class="metric">
+                  <span id="traceabilitySamples">0</span>
+                  <p>Batches Tracked</p>
+                </div>
+                <div class="metric">
+                  <span id="traceabilityIssues">0</span>
+                  <p>Recall Alerts</p>
+                </div>
+              </div>
+              <div class="mini-chart">
+                <canvas id="traceabilityChart"></canvas>
+              </div>
+              <form class="stage-form" data-stage="Traceability">
+                <div>
+                  <label for="traceabilityId">Test ID:</label>
+                  <input type="text" id="traceabilityId" required>
+                </div>
+                <div>
+                  <label for="traceabilityBatch">Batch ID:</label>
+                  <input type="text" id="traceabilityBatch" required>
+                </div>
+                <div>
+                  <label for="traceabilityStatus">Status:</label>
+                  <select id="traceabilityStatus" required>
+                    <option value="Tracked">Tracked</option>
+                    <option value="Recall">Recall</option>
+                  </select>
+                </div>
+                <button type="submit">Log Test</button>
+              </form>
+              <div class="records" id="traceabilityRecords"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Inventory Management Content -->
+      <div id="inventory-content" class="content-section" style="display:none;">
+        <div class="inventory-management">
+          <h1>Inventory Management</h1>
+          <div class="inventory-card-grid">
+            <div class="inventory-card" onclick="highlightRows('raw-milk')">
+              <h3>Total Raw Milk</h3>
+              <p id="totalRawMilk">0 L</p>
+            </div>
+            <div class="inventory-card" onclick="highlightRows('processed')">
+              <h3>Total Processed Products</h3>
+              <p id="totalProcessed">0 L/kg</p>
+            </div>
+            <div class="inventory-card" onclick="highlightRows('expiring')">
+              <h3>Expiring Items</h3>
+              <p id="expiringItems">0</p>
+            </div>
+            <div class="inventory-card" onclick="highlightRows('low-stock')">
+              <h3>Low Stock Items</h3>
+              <p id="lowStockItems">0</p>
+            </div>
+          </div>
+          <div class="table-controls">
+            <div class="inventory-search-bar">
+              <input type="text" id="inventorySearch" placeholder="Search by item or category...">
+              <button id="inventorySearchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="add-item">
+              <button id="addItemBtn"><i class="fas fa-plus"></i> Add Item</button>
+            </div>
+          </div>
+          <div class="inventory-table-container">
+            <table class="inventory-table">
+              <thead>
+                <tr>
+                  <th data-sort="name">Item Name</th>
+                  <th data-sort="category">Category</th>
+                  <th data-sort="quantity">Quantity</th>
+                  <th>Unit</th>
+                  <th>Location</th>
+                  <th data-sort="expiration">Expiration Date</th>
+                  <th data-sort="status">Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+                <!-- Populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          <div class="inventory-status-info">
+            <h3>Status Updates</h3>
+            <ul id="statusUpdates"></ul>
+          </div>
+
+          <!-- Add Item Modal -->
+          <div class="inventory-modal" id="addItemModal">
+            <div class="inventory-modal-content">
+              <h3>Add New Item</h3>
+              <form id="addItemForm">
+                <div>
+                  <label for="itemName">Item Name *</label>
+                  <input type="text" id="itemName" required>
+                  <span class="error" id="nameError">Item name is required</span>
+                </div>
+                <div>
+                  <label for="itemCategory">Category</label>
+                  <select id="itemCategory">
+                    <option value="Raw Milk">Raw Milk</option>
+                    <option value="Processed Milk">Processed Milk</option>
+                    <option value="Feed">Feed</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="itemQuantity">Quantity</label>
+                  <input type="number" id="itemQuantity" min="0" value="0">
+                  <span class="error" id="quantityError">Quantity must be non-negative</span>
+                </div>
+                <div>
+                  <label for="itemUnit">Unit</label>
+                  <select id="itemUnit">
+                    <option value="L">L</option>
+                    <option value="kg">kg</option>
+                    <option value="bags">bags</option>
+                    <option value="units">units</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="itemLocation">Location</label>
+                  <input type="text" id="itemLocation" value="Unknown">
+                </div>
+                <div>
+                  <label for="itemExpiration">Expiration Date (YYYY-MM-DD or N/A)</label>
+                  <input type="text" id="itemExpiration" placeholder="YYYY-MM-DD or N/A" value="N/A">
+                </div>
+                <div>
+                  <label for="itemStatus">Status</label>
+                  <select id="itemStatus">
+                    <option value="OK">OK</option>
+                    <option value="Expiring Soon">Expiring Soon</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </div>
+                <div class="button-group">
+                  <button type="button" onclick="closeModal()">Cancel</button>
+                  <button type="submit">Add Item</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- New Distribution Section -->
+      <div id="distribution-content" class="content-section" style="display:none;">
+        <div class="distribution-main-content">
+          <h1>Distribution</h1>
+          <div class="distribution-timestamp" id="distribution-timestamp"></div>
+
+          <div class="distribution-nav-grid">
+            <div class="distribution-nav-card active" data-section="collection">
+              <i class="fas fa-cow"></i>
+              <span>Collection</span>
+            </div>
+            <div class="distribution-nav-card" data-section="chilling">
+              <i class="fas fa-snowflake"></i>
+              <span>Chilling</span>
+            </div>
+            <div class="distribution-nav-card" data-section="processing">
+              <i class="fas fa-industry"></i>
+              <span>Processing</span>
+            </div>
+            <div class="distribution-nav-card" data-section="packaging">
+              <i class="fas fa-box"></i>
+              <span>Packaging</span>
+            </div>
+            <div class="distribution-nav-card" data-section="transportation">
+              <i class="fas fa-truck"></i>
+              <span>Transportation</span>
+            </div>
+            <div class="distribution-nav-card" data-section="sales">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Sales</span>
+            </div>
+          </div>
+
+          <div id="distribution-content-collection" class="distribution-content-section active">
+            <div class="distribution-tile-grid" id="distribution-collection-tiles"></div>
+          </div>
+          <div id="distribution-content-chilling" class="distribution-content-section">
+            <div class="distribution-tile-grid" id="distribution-chilling-tiles"></div>
+          </div>
+          <div id="distribution-content-processing" class="distribution-content-section">
+            <div class="distribution-tile-grid" id="distribution-processing-tiles"></div>
+          </div>
+          <div id="distribution-content-packaging" class="distribution-content-section">
+            <div class="distribution-tile-grid" id="distribution-packaging-tiles"></div>
+          </div>
+          <div id="distribution-content-transportation" class="distribution-content-section">
+            <div class="distribution-search-bar">
+              <input type="text" id="distribution-shipmentSearch" placeholder="Search by shipment ID or destination...">
+              <button id="distribution-shipmentSearchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="distribution-tile-grid" id="distribution-transportation-tiles"></div>
+          </div>
+          <div id="distribution-content-sales" class="distribution-content-section">
+            <div class="distribution-tile-grid" id="distribution-sales-tiles"></div>
+          </div>
+
+          <div class="distribution-modal" id="distribution-modal">
+            <div class="distribution-modal-content">
+              <h2 id="distribution-modal-title"></h2>
+              <form id="distribution-modal-form"></form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Iframe Container for Other Sections -->
+      <iframe id="content-iframe" class="iframe-container" style="display:none;"></iframe>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
