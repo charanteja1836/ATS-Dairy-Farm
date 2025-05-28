@@ -106,23 +106,6 @@ body {
   text-align: center;
   color: var(--text);
 }
-
-/* Rest of your existing CSS remains unchanged */
-.top-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--card);
-  padding: 0.5rem 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  height: 70px;
-}
-
 /* Top Section */
 .top-section {
   display: flex;
@@ -974,8 +957,8 @@ th {
   border-radius: 12px;
   box-shadow: 0 0 12px rgba(0,0,0,0.08);
   overflow-x: hidden; /* Prevent horizontal overflow */
-  min-height: 100%; /* Ensure it takes at least full viewport height */
-  height: auto; /* Allow height to expand with content */
+  min-height: 100%; 
+  height: auto; 
   display: flex;
   flex-direction: column;
 }
@@ -1056,7 +1039,7 @@ th {
   overflow-x: auto; /* Allow scrolling for wide content */
   width: 100%;
   box-sizing: border-box;
-  height: auto; /* Dynamic height */
+  height: auto; 
   max-height: none; /* Remove any height caps */
 }
 
@@ -1162,8 +1145,8 @@ body.dark #chilling-content .grade.B {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  flex: 1; /* Allow stacking within flex container */
-  min-height: 0; /* Prevent shrinking issues */
+  flex: 1; 
+  min-height: 0; 
 }
 
 #chilling-content .form h4 {
@@ -1226,10 +1209,10 @@ body.dark #chilling-content .grade.B {
   border-radius: 6px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   width: 100%;
-  max-width: 100%; /* Prevent chart overflow */
-  height: auto; /* Allow dynamic height */
-  min-height: 250px; /* Minimum height for charts */
-  max-height: 300px; /* Cap height to prevent excessive growth */
+  max-width: 100%; 
+  height: auto; 
+  min-height: 250px; 
+  max-height: 300px; 
   overflow: visible; /* Allow chart to render fully */
 }
 
@@ -1245,7 +1228,7 @@ body.dark #chilling-content .grade.B {
   max-width: 100%; /* Ensure canvas respects container */
   width: 100% !important;
   height: 100% !important; /* Scale with container */
-  max-height: 280px; /* Prevent excessive chart height */
+  max-height: 280px; 
 }
 
 @media (max-width: 768px) {
@@ -1349,7 +1332,7 @@ body.dark #chilling-content .grade.B {
 /* Processing Plants Styles */
 #processing-content {
   :root {
-    --milk-purple: #8e44ad; /* Define Processing Plants-specific color */
+    --milk-purple: #8e44ad; /*Processing Plants-specific color */
   }
 
   body.dark {
@@ -1371,7 +1354,7 @@ body.dark #chilling-content .grade.B {
   .processing-container h1 {
     text-align: center;
     font-size: 1.8rem;
-    color: var(--text); /* Use ATS Admin Dashboard's text color */
+    color: var(--text); /*ATS Admin Dashboard's text color */
     font-weight: 600;
   }
 
@@ -1934,7 +1917,7 @@ body.dark #chilling-content .grade.B {
   .metric p {
     font-size: 11px;
     margin-top: 3px;
-    color: var(--text); /* Use ATS text color */
+    color: var(--text); /*ATS text color */
   }
 
   .mini-chart {
@@ -2018,7 +2001,7 @@ body.dark #chilling-content .grade.B {
   }
 
   .record button {
-    background: var(--error); /* Use ATS error color (red) */
+    background: var(--error); /*ATS error color (red) */
     color: #fff;
     border: none;
     padding: 5px;
