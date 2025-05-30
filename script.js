@@ -324,190 +324,364 @@ function initCRM() {
 }
 
 // Initialize Milk Collection
-function initMilkCollection() {
-  const suppliers = [
-    { id: 'SP-1001', name: 'Rajesh Patel', contact: '9876543210', location: 'Village A', cows: 5, yield: 24, status: 'Active' },
-    { id: 'SP-1002', name: 'Sita Devi', contact: '8765432109', location: 'Village B', cows: 3, yield: 15, status: 'New' },
-    { id: 'SP-1003', name: 'Anil Kumar', contact: '7654321098', location: 'Village C', cows: 8, yield: 40, status: 'Active' }
-  ];
+/* Fake Data */
+const suppliers = [
+  {id:'SP-1001', name:'Rajesh Patel', contact:'9876543210', location:'Village A', cows:5, yield:24.50, status:'Active'},
+  {id:'SP-1002', name:'Meena Sharma', contact:'9876543211', location:'Village B', cows:8, yield:38.30, status:'Active'},
+  {id:'SP-1003', name:'Vijay Kumar', contact:'9876543212', location:'Village C', cows:12, yield:52.25, status:'New'},
+  {id:'SP-1004', name:'Sunita Devi', contact:'9876543213', location:'Village A', cows:8, yield:29.95, status:'Active'}
+];
 
-  let milkRecords = [
-    { date: '2025-05-20', quantity: 500, fat: 4.2 },
-    { date: '2025-05-20', quantity: 300, fat: 4.0 }
-  ];
+let milkEntries = [
+  { date: '2025-05-25', quantity: 200, fat: 4.5, status: 'Pending' },
+  { date: '2025-05-25', quantity: 150, fat: 3.2, status: 'Cleared' },
+  { date: '2025-05-26', quantity: 180, fat: 2.5, status: 'Pending' },
+  { date: '2025-05-26', quantity: 220, fat: 4.8, status: 'Pending' },
+  { date: '2025-05-27', quantity: 100, fat: 3.0, status: 'Cleared' }
+];
+let qualitySort = { field: 'date', direction: 'asc' };
 
-  const supplierTableBody = document.getElementById('supplierTableBody');
-  const milkTableBody = document.getElementById('milkTableBody');
-  const addSupplierBtn = document.getElementById('addSupplierBtn');
-  const supplierModal = document.getElementById('supplierModal');
-  const supplierForm = document.getElementById('supplierForm');
-  const closeModal = supplierModal.querySelector('.close');
-  const addMilkBtn = document.getElementById('addMilkBtn');
-  const exportMilkBtn = document.getElementById('exportMilkBtn');
-  const tabs = document.querySelectorAll('.tab');
-  const totalSuppliersCard = document.getElementById('totalSuppliersCard');
-  const todaysCollectionCard = document.getElementById('todaysCollectionCard');
-  const avgQualityCard = document.getElementById('avgQualityCard');
-  const pendingPaymentsCard = document.getElementById('pendingPaymentsCard');
-  const totalQuantityEl = document.getElementById('totalQuantity');
-  const avgFatEl = document.getElementById('avgFat');
+/* Tabs */
+const tabs = document.querySelectorAll('.tab');
+const tabContents = document.querySelectorAll('.tab-content');
 
-  function renderSuppliers() {
-    supplierTableBody.innerHTML = suppliers.map(supplier => `
-      <tr>
-        <td>${supplier.id}</td>
-        <td>${supplier.name}</td>
-        <td>${supplier.contact}</td>
-        <td>${supplier.location}</td>
-        <td>${supplier.cows}</td>
-        <td>${supplier.yield.toFixed(1)} L</td>
-        <td><span class="status ${supplier.status}">${supplier.status}</span></td>
-        <td class="actions">
-          <i class="fas fa-pen edit-supplier"></i>
-          <i class="fas fa-trash delete-supplier"></i>
-        </td>
-      </tr>
-    `).join('');
-    updateSummaryCards();
-    setupSupplierEventListeners();
-  }
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  tabs.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const tabId = btn.dataset.tab;
+  tabContents.forEach(tc => tc.classList.toggle('active', tc.id === tabId));
+  if (tabId === 'quality') renderQualityTable();
+  if (tabId === 'payments') renderPaymentsTable();
+}));
 
-  function renderMilkRecords() {
-    milkTableBody.innerHTML = milkRecords.map(record => `
-      <tr>
-        <td>${record.date}</td>
-        <td>${record.quantity.toFixed(1)}</td>
-        <td>${record.fat.toFixed(1)}</td>
-      </tr>
-    `).join('');
-    updateMilkTotals();
-  }
+/* Suppliers Rendering */
+function renderSuppliers() {
+  const tbody = document.getElementById('supplierTableBody');
+  tbody.innerHTML = suppliers.map(s => `<tr>
+      <td>${s.id}</td>
+      <td>${s.name}</td>
+      <td>${s.contact}</td>
+      <td>${s.location}</td>
+      <td>${s.cows}</td>
+      <td>${s.yield.toFixed(2)}L</td>
+      <td><span class="status ${s.status}">${s.status}</span></td>
+      <td class="actions">
+        <i class="fas fa-eye" title="View"></i>
+        <i class="fas fa-pen" title="Edit"></i>
+        <i class="fas fa-trash" title="Delete" onclick="deleteSupplier('${s.id}')"></i>
+      </td>
+    </tr>`).join('');
+  updateSummaryCards();
+}
 
-  function updateSummaryCards() {
-    totalSuppliersCard.textContent = suppliers.length;
-    const today = new Date().toISOString().split('T')[0];
-    const todayCollection = milkRecords.filter(r => r.date === today).reduce((sum, r) => sum + r.quantity, 0);
-    todaysCollectionCard.textContent = `${todayCollection.toFixed(1)}L`;
-    const avgFat = milkRecords.length ? (milkRecords.reduce((sum, r) => sum + r.fat, 0) / milkRecords.length).toFixed(1) : 0;
-    avgQualityCard.textContent = avgFat >= 4 ? 'A' : avgFat >= 3.5 ? 'A-' : 'B';
-    pendingPaymentsCard.textContent = '₹84,500'; // Static for now
-  }
-
-  function updateMilkTotals() {
-    const totalQuantity = milkRecords.reduce((sum, r) => sum + r.quantity, 0);
-    const avgFat = milkRecords.length ? (milkRecords.reduce((sum, r) => sum + r.fat, 0) / milkRecords.length).toFixed(1) : 0;
-    totalQuantityEl.textContent = totalQuantity.toFixed(1);
-    avgFatEl.textContent = avgFat;
-  }
-
-  function setupSupplierEventListeners() {
-    document.querySelectorAll('.delete-supplier').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.closest('tr').children[0].textContent;
-        if (confirm(`Delete supplier ${id}?`)) {
-          suppliers.splice(suppliers.findIndex(s => s.id === id), 1);
-          renderSuppliers();
-        }
-      });
-    });
-    document.querySelectorAll('.edit-supplier').forEach(btn => {
-      btn.addEventListener('click', () => alert('Edit supplier clicked'));
-    });
-  }
-
-  function addSupplier(data) {
-    if (suppliers.some(s => s.id === data.id)) {
-      alert('Supplier ID already exists.');
-      return;
+function deleteSupplier(id) {
+  if (confirm('Delete supplier ' + id + '?')) {
+    const idx = suppliers.findIndex(s => s.id === id);
+    if (idx > -1) {
+      suppliers.splice(idx, 1);
+      renderSuppliers();
     }
-    suppliers.push({
-      id: data.id,
-      name: data.name,
-      contact: data.contact,
-      location: data.location,
-      cows: Number(data.cows) || 0,
-      yield: Number(data.yield) || 0,
-      status: data.status
-    });
-    renderSuppliers();
-    supplierModal.style.display = 'none';
-    supplierForm.reset();
   }
+}
 
-  function exportToCSV() {
-    const csv = ['Date,Quantity (L),Fat (%)', ...milkRecords.map(r => `${r.date},${r.quantity.toFixed(1)},${r.fat.toFixed(1)}`)].join('\n');
+/* Supplier Modal */
+const supplierModal = document.getElementById('supplierModal');
+const addSupplierBtn = document.getElementById('addSupplierBtn');
+const closeModalBtn = supplierModal.querySelector('.close');
+const supplierForm = document.getElementById('supplierForm');
+
+addSupplierBtn.onclick = () => supplierModal.style.display = 'block';
+closeModalBtn.onclick = () => supplierModal.style.display = 'none';
+window.onclick = e => { if (e.target === supplierModal || e.target === milkEntryModal) supplierModal.style.display = milkEntryModal.style.display = 'none'; };
+
+supplierForm.onsubmit = e => {
+  e.preventDefault();
+  const newSupplier = {
+    id: document.getElementById('spId').value.trim(),
+    name: document.getElementById('spName').value.trim(),
+    contact: document.getElementById('spContact').value.trim(),
+    location: document.getElementById('spLocation').value.trim(),
+    cows: parseInt(document.getElementById('spCows').value),
+    yield: parseFloat(document.getElementById('spYield').value),
+    status: document.getElementById('spStatus').value
+  };
+  suppliers.push(newSupplier);
+  supplierForm.reset();
+  supplierModal.style.display = 'none';
+  renderSuppliers();
+};
+
+/* Milk Entry Modal */
+const milkEntryModal = document.getElementById('milkEntryModal');
+const addQualityEntryBtn = document.getElementById('addQualityEntryBtn');
+const addPaymentEntryBtn = document.getElementById('addPaymentEntryBtn');
+const milkEntryForm = document.getElementById('milkEntryForm');
+const closeMilkModalBtn = milkEntryModal.querySelector('.close');
+
+addQualityEntryBtn.onclick = addPaymentEntryBtn.onclick = () => milkEntryModal.style.display = 'block';
+closeMilkModalBtn.onclick = () => milkEntryModal.style.display = 'none';
+
+milkEntryForm.onsubmit = e => {
+  e.preventDefault();
+  const date = document.getElementById('newMilkDate').value;
+  const quantity = parseFloat(document.getElementById('newMilkQuantity').value);
+  const fat = parseFloat(document.getElementById('newMilkFat').value);
+  if (!date || isNaN(quantity) || isNaN(fat) || quantity <= 0 || fat < 0 || fat > 10) {
+    alert('Please enter valid data (quantity > 0, fat 0–10%).');
+    return;
+  }
+  milkEntries.push({ date, quantity, fat, status: 'Pending' });
+  milkEntryForm.reset();
+  milkEntryModal.style.display = 'none';
+  renderMilkTable();
+  updateMilkTotals();
+  renderQualityTable();
+  renderPaymentsTable();
+  updateSummaryCards();
+};
+
+/* Milk Collection */
+const addMilkBtn = document.getElementById('addMilkBtn');
+const exportMilkBtn = document.getElementById('exportMilkBtn');
+
+addMilkBtn.onclick = addMilkEntry;
+exportMilkBtn.onclick = exportMilkData;
+
+function addMilkEntry() {
+  const date = document.getElementById('milkDate').value;
+  const quantity = parseFloat(document.getElementById('milkQuantity').value);
+  const fat = parseFloat(document.getElementById('milkFat').value);
+  if (!date || isNaN(quantity) || isNaN(fat) || quantity <= 0 || fat < 0 || fat > 10) {
+    alert('Please enter valid data (quantity > 0, fat 0–10%).');
+    return;
+  }
+  milkEntries.push({ date, quantity, fat, status: 'Pending' });
+  document.getElementById('milkDate').value = '';
+  document.getElementById('milkQuantity').value = '';
+  document.getElementById('milkFat').value = '';
+  renderMilkTable();
+  updateMilkTotals();
+  renderQualityTable();
+  renderPaymentsTable();
+  updateSummaryCards();
+}
+
+function renderMilkTable() {
+  const tbody = document.getElementById('milkTableBody');
+  tbody.innerHTML = milkEntries.map(e => `<tr><td>${e.date}</td><td>${e.quantity}</td><td>${e.fat}</td></tr>`).join('');
+}
+
+function updateMilkTotals() {
+  const totalQ = milkEntries.reduce((sum, e) => sum + e.quantity, 0);
+  const avgF = milkEntries.length ? (milkEntries.reduce((sum, e) => sum + e.fat, 0) / milkEntries.length).toFixed(2) : 0;
+  document.getElementById('totalQuantity').textContent = totalQ.toFixed(2);
+  document.getElementById('avgFat').textContent = avgF;
+  updateSummaryCards();
+}
+
+function exportMilkData() {
+  if (milkEntries.length === 0) {
+    alert('No data to export.');
+    return;
+  }
+  try {
+    let csv = 'Date,Quantity (L),Fat (%)\n';
+    milkEntries.forEach(e => csv += `${e.date},${e.quantity},${e.fat}\n`);
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'milk_records.csv';
+    a.download = 'milk_collection_data.csv';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Export failed. Please try a different browser.');
   }
-
-  addSupplierBtn.addEventListener('click', () => supplierModal.style.display = 'block');
-  closeModal.addEventListener('click', () => supplierModal.style.display = 'none');
-  window.addEventListener('click', e => {
-    if (e.target === supplierModal) supplierModal.style.display = 'none';
-  });
-  supplierForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const id = document.getElementById('spId').value.trim();
-    const name = document.getElementById('spName').value.trim();
-    const contact = document.getElementById('spContact').value.trim();
-    const location = document.getElementById('spLocation').value.trim();
-    const cows = parseInt(document.getElementById('spCows').value, 10);
-    const yieldVal = parseFloat(document.getElementById('spYield').value);
-    const status = document.getElementById('spStatus').value;
-
-    if (!id || !name || !contact || !location || isNaN(cows) || isNaN(yieldVal) || cows < 0 || yieldVal < 0) {
-      alert('Please fill all fields with valid values.');
-      return;
-    }
-
-    addSupplier({
-      id,
-      name,
-      contact,
-      location,
-      cows,
-      yield: yieldVal,
-      status
-    });
-  });
-
-  addMilkBtn.addEventListener('click', () => {
-    const date = document.getElementById('milkDate').value;
-    const quantity = parseFloat(document.getElementById('milkQuantity').value);
-    const fat = parseFloat(document.getElementById('milkFat').value);
-
-    if (!date || isNaN(quantity) || isNaN(fat) || quantity <= 0 || fat <= 0) {
-      alert('Please fill all fields with valid values.');
-      return;
-    }
-
-    milkRecords.push({ date, quantity, fat });
-    renderMilkRecords();
-    updateSummaryCards();
-    document.getElementById('milkDate').value = '';
-    document.getElementById('milkQuantity').value = '';
-    document.getElementById('milkFat').value = '';
-  });
-
-  exportMilkBtn.addEventListener('click', exportToCSV);
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.tab).classList.add('active');
-    });
-  });
-
-  renderSuppliers();
-  renderMilkRecords();
 }
+
+/* Quality Control */
+function getQualityGrade(fat) {
+  if (fat > 4) return 'A';
+  if (fat >= 3) return 'B';
+  return 'C';
+}
+
+function renderQualityTable() {
+  const filter = document.getElementById('qualityFilter').value;
+  const search = document.getElementById('qualitySearch').value.toLowerCase();
+  let filteredEntries = filter === 'all' ? milkEntries : milkEntries.filter(e => getQualityGrade(e.fat) === filter);
+  filteredEntries = filteredEntries.filter(e => e.date.toLowerCase().includes(search) || getQualityGrade(e.fat).toLowerCase().includes(search));
+
+  // Sorting
+  filteredEntries.sort((a, b) => {
+    let fieldA = a[qualitySort.field] || getQualityGrade(a.fat);
+    let fieldB = b[qualitySort.field] || getQualityGrade(b.fat);
+    if (qualitySort.field === 'grade') {
+      fieldA = getQualityGrade(a.fat);
+      fieldB = getQualityGrade(b.fat);
+    }
+    if (qualitySort.direction === 'asc') {
+      return fieldA > fieldB ? 1 : -1;
+    } else {
+      return fieldA < fieldB ? 1 : -1;
+    }
+  });
+
+  const tbody = document.getElementById('qualityTableBody');
+  tbody.innerHTML = filteredEntries.map((e, i) => `<tr>
+    <td>${e.date}</td>
+    <td>${e.quantity}</td>
+    <td>${e.fat}</td>
+    <td><span class="status ${getQualityGrade(e.fat)}">${getQualityGrade(e.fat)}</span></td>
+    <td class="actions"><i class="fas fa-trash" onclick="deleteQualityEntry(${milkEntries.indexOf(e)})" title="Delete Entry"></i></td>
+  </tr>`).join('');
+
+  // Update totals
+  const avgFat = filteredEntries.length ? (filteredEntries.reduce((sum, e) => sum + e.fat, 0) / filteredEntries.length).toFixed(2) : 0;
+  document.getElementById('selectedAvgFat').textContent = avgFat;
+
+  // Update sort indicators
+  document.querySelectorAll('.sortable').forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (th.dataset.sort === qualitySort.field) {
+      th.classList.add(qualitySort.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  });
+}
+
+function deleteQualityEntry(index) {
+  if (confirm(`Delete entry for ${milkEntries[index].date}?`)) {
+    milkEntries.splice(index, 1);
+    renderMilkTable();
+    updateMilkTotals();
+    renderQualityTable();
+    renderPaymentsTable();
+    updateSummaryCards();
+  }
+}
+
+document.getElementById('qualityFilter').addEventListener('change', renderQualityTable);
+document.getElementById('qualitySearch').addEventListener('input', () => renderQualityTable());
+document.querySelectorAll('.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const field = th.dataset.sort;
+    if (qualitySort.field === field) {
+      qualitySort.direction = qualitySort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      qualitySort.field = field;
+      qualitySort.direction = 'asc';
+    }
+    renderQualityTable();
+  });
+});
+
+/* Payments */
+function calculatePayment(quantity, fat) {
+  const baseRate = 50; // ₹50 per liter
+  const fatBonus = fat * 10; // ₹10 per % fat
+  return (quantity * (baseRate + fatBonus)).toFixed(2);
+}
+
+function renderPaymentsTable() {
+  const filter = document.getElementById('paymentStatusFilter').value;
+  const filteredEntries = filter === 'all' ? milkEntries : milkEntries.filter(e => e.status === filter);
+
+  const tbody = document.getElementById('paymentsTableBody');
+  tbody.innerHTML = filteredEntries.map((e, i) => `<tr>
+    <td><input type="checkbox" class="payment-checkbox" data-index="${milkEntries.indexOf(e)}" ${e.status === 'Cleared' ? 'checked' : ''}></td>
+    <td>${e.date}</td>
+    <td>${e.quantity}</td>
+    <td>₹${calculatePayment(e.quantity, e.fat)}</td>
+    <td><span class="status ${e.status}">${e.status}</span></td>
+    <td class="actions"><i class="fas fa-trash" onclick="deletePaymentEntry(${milkEntries.indexOf(e)})" title="Delete entry"></i></td>
+  </tr>`).join('');
+
+  // Update total pending
+  const totalPending = milkEntries.reduce((sum, e) => e.status === 'Pending' ? sum + parseFloat(calculatePayment(e.quantity, e.fat)) : sum, 0);
+  document.getElementById('totalPending').textContent = `₹${totalPending.toFixed(2)}`;
+
+  // Update Select All checkbox state
+  const selectAll = document.getElementById('selectAllPayments');
+  selectAll.checked = filteredEntries.length > 0 && filteredEntries.every(e => e.status === 'Cleared');
+
+  // Checkbox event listeners
+  document.querySelectorAll('.payment-checkbox').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      const index = parseInt(e.target.dataset.index);
+      milkEntries[index].status = e.target.checked ? 'Cleared' : 'Pending';
+      renderPaymentsTable();
+      updateSummaryCards();
+    });
+  });
+}
+
+function deletePaymentEntry(index) {
+  if (confirm(`Delete entry for ${milkEntries[index].date}?`)) {
+    milkEntries.splice(index, 1);
+    renderMilkTable();
+    updateMilkTotals();
+    renderQualityTable();
+    renderPaymentsTable();
+    updateSummaryCards();
+  }
+}
+
+function exportPaymentsData() {
+  if (milkEntries.length === 0) {
+    alert('No data to export.');
+    return;
+  }
+  try {
+    let csv = 'Date,Quantity (L),Fat (%),Payment (₹),Status\n';
+    milkEntries.forEach(e => {
+      csv += `${e.date},${e.quantity},${e.fat},${calculatePayment(e.quantity, e.fat)},${e.status}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'payment_history.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Export failed. Please try a different browser.');
+  }
+}
+
+document.getElementById('paymentStatusFilter').addEventListener('change', renderPaymentsTable);
+document.getElementById('exportPaymentsBtn').addEventListener('click', exportPaymentsData);
+document.getElementById('selectAllPayments').addEventListener('change', (e) => {
+  if (e.target.checked) {
+    const filter = document.getElementById('paymentStatusFilter').value;
+    const indices = (filter === 'all' ? milkEntries : milkEntries.filter(e => e.status === filter))
+      .map((e, i) => milkEntries.indexOf(e))
+      .filter(i => milkEntries[i].status === 'Pending');
+    indices.forEach(i => milkEntries[i].status = 'Cleared');
+    renderPaymentsTable();
+    updateSummaryCards();
+  }
+});
+
+/* Summary Cards Update */
+function updateSummaryCards() {
+  document.getElementById('totalSuppliersCard').textContent = suppliers.length;
+  document.getElementById('todaysCollectionCard').textContent = milkEntries.reduce((sum, e) => sum + e.quantity, 0).toFixed(2) + 'L';
+  const avgQuality = milkEntries.length ? milkEntries.reduce((sum, e) => sum + (getQualityGrade(e.fat) === 'A' ? 3 : getQualityGrade(e.fat) === 'B' ? 2 : 1), 0) / milkEntries.length : 0;
+  document.getElementById('avgQualityCard').textContent = avgQuality ? (avgQuality >= 2.5 ? 'A' : avgQuality >= 1.5 ? 'B' : 'C') : 'N/A';
+  const pendingPayments = milkEntries.reduce((sum, e) => e.status === 'Pending' ? sum + parseFloat(calculatePayment(e.quantity, e.fat)) : sum, 0);
+  document.getElementById('pendingPaymentsCard').textContent = `₹${pendingPayments.toFixed(2)}`;
+}
+
+/* Init */
+renderSuppliers();
+renderMilkTable();
+renderQualityTable();
+renderPaymentsTable();
+updateSummaryCards();
 
 // Initialize Chilling Centers
 function initChillingCenters() {
@@ -1178,6 +1352,286 @@ function initProcessingPlants() {
   renderMaintenanceTasks();
 }
 // Initialize Quality Control
+function initQualityControl() {
+  let testResults = [
+    { id: 'TEST-001', stage: 'Reception', batch: 'BATCH-001', fat: 4.2, tpc: 5000 },
+    { id: 'TEST-002', stage: 'Pasteurization', batch: 'BATCH-002', phosphatase: 'Pass' },
+    { id: 'TEST-003', stage: 'Packaging', batch: 'BATCH-003', status: 'Fail' }
+  ];
+
+  function updateCardContent(stage) {
+    const stageTests = testResults.filter(t => t.stage === t.stage);
+    const records = document.getElementById(`${stage.toLowerCase()}Records`);
+    records.innerHTML = stageTests.map(t => `
+      <div class="record" data-id="${t.id}">
+        <div class="record-details">
+          <p>ID: ${t.id}</p>
+          <p>Batch ID: ${t.batch}</p>
+          ${t.fat ? `<p>Fat Content: ${t.fat.toFixed(1)}%</p>` : ''}
+          ${t.tpc ? `<p>TPC: ${t.tpc} CFU/mL</p>` : ''}
+          ${t.phosphatase ? `<p>Phosphatase Test: ${t.phosphatase}</p>` : ''}
+          ${t.status ? `<p>Status: ${t.status}</p>` : ''}
+        </div>
+        <button class="delete">Delete Log</button>
+      </div>
+    `).join('');
+
+    if (stage === 'Reception') {
+      const samples = stageTests.length;
+      const tpcIssues = stageTests.filter(t => t.tpc > 10000).length;
+      document.getElementById('receptionSamples').textContent = samples;
+      document.getElementById('receptionTests').textContent = tpcIssues;
+
+      const labels = ['Low TPC', 'High TPC', 'High TPC'];
+      const data = [
+        stageTests.filter(t => t.tpc <= 10000).length,
+        stageTests.filter(t => t.tpc > 10000).length
+      ];
+      new Chart(document.getElementById('receptionChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: '#0288d1',
+            borderColor: '#0288d1',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: `${stage} Metrics`
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    } else if (stage === 'Pasteurization') {
+      const samples = stageTests.length;
+      const issues = stageTests.filter(t => t.phosphatase === 'Fail').length;
+      document.getElementById('pasteurizationSamples').textContent = samples;
+      document.getElementById('pasteurizationIssues').textContent = issues;
+
+      const labels = ['Pass', 'Fail'];
+      const data = [
+        stageTests.filter(t => t.phosphatase === 'Pass').length,
+        stageTests.filter(t => t.phosphatase === 'Fail').length
+      ];
+      new Chart(document.getElementById('pasteurizationChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: '#0288d1',
+            borderColor: '#0288d1',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: `${stage} Metrics`
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    } else if (stage === 'Cleaning') {
+      const samples = stageTests.length;
+      const issues = stageTests.filter(t => t.tpc > 10000).length;
+      document.getElementById('cleaningSamples').textContent = samples;
+      document.getElementById('cleaningIssues').textContent = issues;
+
+      const labels = ['Low TPC', 'High TPC'];
+      const data = [
+        stageTests.filter(t => t.tpc <= 10000).length,
+        stageTests.filter(t => t.tpc > 10000).length
+      ];
+      new Chart(document.getElementById('cleaningChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: '#0288d1',
+            borderColor: '#0288d1',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: `${stage} Metrics`
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    } else if (stage === 'Packaging') {
+      const samples = stageTests.length;
+      const issues = stageTests.filter(t => t.status === 'Fail').length;
+      document.getElementById('packagingSamples').textContent = samples;
+      document.getElementById('packagingIssues').textContent = issues;
+
+      const labels = ['Pass', 'Fail'];
+      const data = [
+        stageTests.filter(t => t.status === 'Pass').length,
+        stageTests.filter(t => t.status === 'Fail').length
+      ];
+      new Chart(document.getElementById('packagingChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: '#0288d1',
+            borderColor: '#0288d1',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: `${stage} Metrics`
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    } else if (stage === 'Traceability') {
+      const samples = [...new Set(stageTests.map(t => t.batch))].length;
+      const issues = stageTests.filter(t => t.status === 'Recall').length;
+      document.getElementById('traceabilitySamples').textContent = samples;
+      document.getElementById('traceabilityIssues').textContent = issues;
+
+      const labels = ['Tracked', 'Recall'];
+      const data = [
+        stageTests.filter(t => t.status === 'Tracked').length,
+        stageTests.filter(t => t.status === 'Recall').length
+      ];
+      new Chart(document.getElementById('traceabilityChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: '#0288d1',
+            borderColor: '#0288d1',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: `${stage} Metrics`
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    document.querySelectorAll(`#${stage.toLowerCase()}Records .delete`).forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.closest('.record').dataset.id;
+        testResults = testResults.filter(t => t.id !== id);
+        updateCardContent(stage);
+      });
+    });
+  }
+
+  // Navigation Functionality
+  document.querySelectorAll('#quality-content .nav-step').forEach(step => {
+    step.addEventListener('click', () => {
+      document.querySelectorAll('#quality-content .nav-step').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('#quality-content .stage-card').forEach(c => c.classList.remove('active'));
+      step.classList.add('active');
+      document.querySelector(`#${step.dataset.stage.toLowerCase()}Card`).classList.add('active');
+    });
+  });
+
+  // Form Handling
+  document.querySelectorAll('#quality-content .stage-form').forEach(form => {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const stage = form.dataset.stage;
+      const id = document.getElementById(`${stage.toLowerCase()}Id`).value.trim();
+      const batch = document.getElementById(`${stage.toLowerCase()}Batch`).value.trim();
+
+      let testData = { id, stage, batch };
+
+      if (stage === 'Reception') {
+        const fat = parseFloat(document.getElementById('receptionFat').value);
+        const tpc = parseFloat(document.getElementById('receptionTPC').value);
+        if (isNaN(fat) || isNaN(tpc) || fat <= 0 || tpc < 0) {
+          alert('Please fill all fields with valid values.');
+          return;
+        }
+        testData.fat = fat;
+        testData.tpc = tpc;
+      } else if (stage === 'Pasteurization') {
+        const phosphatase = document.getElementById('pasteurizationPhosphatase').value;
+        testData.phosphatase = phosphatase;
+      } else if (stage === 'Cleaning') {
+        const tpc = parseFloat(document.getElementById('cleaningTPC').value);
+        if (isNaN(tpc) || tpc < 0) {
+          alert('Please fill TPC with a valid value.');
+          return;
+        }
+        testData.tpc = tpc;
+      } else if (stage === 'Packaging') {
+        const status = document.getElementById('packagingStatus').value;
+        testData.status = status;
+      } else if (stage === 'Traceability') {
+        const status = document.getElementById('traceabilityStatus').value;
+        testData.status = status;
+      }
+
+      testResults.push(testData);
+      updateCardContent(stage);
+      form.reset();
+    });
+  });
+
+  ['Reception', 'Pasteurization', 'Cleaning', 'Traceability', 'Packaging'].forEach(updateCardContent);
+}
 function initInventoryManagement() {
   // Load data from localStorage or use default mock data
   let inventoryData = JSON.parse(localStorage.getItem('inventoryData')) || [
@@ -1218,9 +1672,9 @@ function initInventoryManagement() {
     try {
       const statusList = document.getElementById("statusUpdates");
       const li = document.createElement("li");
-      const timestamp = new Date().toLocaleString('en-IN', {
-        hour: '2-digit',
-        minute: '2-digit',
+      const timestamp = new Date().toLocaleString('en-IN', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
         hour12: true,
         day: '2-digit',
         month: 'short',
@@ -1556,7 +2010,7 @@ function distributionRenderTiles(section) {
   const container = document.getElementById(`distribution-${section}-tiles`);
   if (!container) return;
   container.innerHTML = '';
- 
+  
   // Add tile
   const addTile = document.createElement('div');
   addTile.className = 'distribution-tile add-tile';
