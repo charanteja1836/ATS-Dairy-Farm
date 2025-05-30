@@ -308,128 +308,196 @@
 
       <!-- Milk Collection Content -->
       <div id="milk-content" class="content-section" style="display:none;">
-        <div class="milk-container">
-          <h1>Milk Collection</h1>
+        <div class="dashboard-container">
+        <h1>Milk Collection</h1>
 
-          <!-- Summary Cards -->
-          <div class="summary-cards">
-            <div class="summary-card purple">
-              <span class="value" id="totalSuppliersCard">142</span>
-              <span class="label">Total Suppliers</span>
-            </div>
-            <div class="summary-card blue">
-              <span class="value" id="todaysCollectionCard">1,840L</span>
-              <span class="label">Today's Collection</span>
-            </div>
-            <div class="summary-card green">
-              <span class="value" id="avgQualityCard">A-</span>
-              <span class="label">Avg. Quality</span>
-            </div>
-            <div class="summary-card red">
-              <span class="value" id="pendingPaymentsCard">₹84,500</span>
-              <span class="label">Pending Payments</span>
-            </div>
+        <!-- ───── Summary Cards ───────── ▶ -->
+        <div class="summary-cards">
+          <div class="summary-card purple">
+            <span class="value" id="totalSuppliersCard">142</span>
+            <span class="label">Total Suppliers</span>
           </div>
-
-          <!-- Tabs -->
-          <div class="tabs">
-            <button class="tab active" data-tab="suppliers">Suppliers</button>
-            <button class="tab" data-tab="collection">Milk Collection</button>
-            <button class="tab" data-tab="quality">Quality Control</button>
-            <button class="tab" data-tab="payments">Payments</button>
+          <div class="summary-card blue">
+            <span class="value" id="todaysCollectionCard">1,840L</span>
+            <span class="label">Today's Collection</span>
           </div>
-
-          <!-- Suppliers Tab -->
-          <section id="suppliers" class="tab-content active">
-            <div class="suppliers-header">
-              <h2>Supplier Management</h2>
-              <button id="addSupplierBtn" class="btn-purple"><i class="fas fa-plus"></i> Add Supplier</button>
-            </div>
-
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>SUPPLIER ID</th>
-                    <th>NAME</th>
-                    <th>CONTACT</th>
-                    <th>LOCATION</th>
-                    <th>COWS</th>
-                    <th>AVG. YIELD</th>
-                    <th>STATUS</th>
-                    <th>ACTIONS</th>
-                  </tr>
-                </thead>
-                <tbody id="supplierTableBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <!-- Milk Collection Tab -->
-          <section id="collection" class="tab-content">
-            <h2>Milk Collection Entries</h2>
-
-            <div class="form-container">
-              <input type="date" id="milkDate" required>
-              <input type="number" id="milkQuantity" placeholder="Quantity (liters)" required>
-              <input type="number" id="milkFat" placeholder="Fat (%)" step="0.1" required>
-              <button id="addMilkBtn" class="btn-blue">Add Entry</button>
-              <button id="exportMilkBtn" class="btn-green">Export CSV</button>
-            </div>
-
-            <div class="totals">
-              <p>Total Quantity: <span id="totalQuantity">0</span> L</p>
-              <p>Average Fat: <span id="avgFat">0</span> %</p>
-            </div>
-
-            <div class="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Quantity (L)</th>
-                    <th>Fat (%)</th>
-                  </tr>
-                </thead>
-                <tbody id="milkTableBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <!-- Quality Control Tab (Placeholder) -->
-          <section id="quality" class="tab-content placeholder">
-            <h2>Quality Control</h2>
-            <p>Coming soon…</p>
-          </section>
-
-          <!-- Payments Tab (Placeholder) -->
-          <section id="payments" class="tab-content placeholder">
-            <h2>Payments</h2>
-            <p>Coming soon…</p>
-          </section>
-
-          <!-- Supplier Modal -->
-          <div id="supplierModal" class="modal">
-            <div class="modal-content">
-              <span class="close">×</span>
-              <h3>Add Supplier</h3>
-              <form id="supplierForm">
-                <input type="text" id="spId" placeholder="Supplier ID" required>
-                <input type="text" id="spName" placeholder="Name" required>
-                <input type="text" id="spContact" placeholder="Contact" required>
-                <input type="text" id="spLocation" placeholder="Location" required>
-                <input type="number" id="spCows" placeholder="No. of Cows" required>
-                <input type="number" id="spYield" placeholder="Avg. Yield (L)" step="0.1" required>
-                <select id="spStatus" required>
-                  <option value="Active">Active</option>
-                  <option value="New">New</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-                <button type="submit" class="btn-purple">Save Supplier</button>
-              </form>
-            </div>
+          <div class="summary-card green">
+            <span class="value" id="avgQualityCard">A-</span>
+            <span class="label">Avg. Quality</span>
+          </div>
+          <div class="summary-card red">
+            <span class="value" id="pendingPaymentsCard">₹84,500</span>
+            <span class="label">Pending Payments</span>
           </div>
         </div>
+
+        <!-- ───── Tabs ───────── ▶ -->
+        <div class="tabs">
+          <button class="tab active" data-tab="suppliers">Suppliers</button>
+          <button class="tab" data-tab="collection">Milk Collection</button>
+          <button class="tab" data-tab="quality">Quality Control</button>
+          <button class="tab" data-tab="payments">Payments</button>
+        </div>
+
+        <!-- ───── Suppliers TAB ───────── ▶ -->
+        <section id="suppliers" class="tab-content active">
+          <div class="suppliers-header">
+            <h2>Supplier Management</h2>
+            <button id="addSupplierBtn" class="btn-purple"><i class="fas fa-plus"></i> Add Supplier</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>SUPPLIER ID</th>
+                  <th>NAME</th>
+                  <th>CONTACT</th>
+                  <th>LOCATION</th>
+                  <th>COWS</th>
+                  <th>AVG. YIELD</th>
+                  <th>STATUS</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="supplierTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ───── Milk-Collection TAB ───────── ▶ -->
+        <section id="collection" class="tab-content">
+          <h2>Milk Collection Entries</h2>
+
+          <div class="form-container">
+            <input type="date" id="milkDate" required>
+            <input type="number" id="milkQuantity" placeholder="Quantity (liters)" required>
+            <input type="number" id="milkFat" placeholder="Fat (%)" step="0.1" required>
+            <button id="addMilkBtn" class="btn-blue">Add Entry</button>
+            <button id="exportMilkBtn" class="btn-green">Export CSV</button>
+          </div>
+
+          <div class="totals">
+            <p>Total Quantity: <span id="totalQuantity">0</span> L</p>
+            <p>Average Fat: <span id="avgFat">0</span> %</p>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Quantity (L)</th>
+                  <th>Fat (%)</th>
+                </tr>
+              </thead>
+              <tbody id="milkTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ───── Quality Control TAB ───────── ▶ -->
+        <section id="quality" class="tab-content">
+          <h2>Quality Control</h2>
+          <div class="form-container">
+            <input type="text" id="qualitySearch" placeholder="Search by date or grade...">
+            <select id="qualityFilter">
+              <option value="all">All Grades</option>
+              <option value="A">Grade A</option>
+              <option value="B">Grade B</option>
+              <option value="C">Grade C</option>
+            </select>
+          </div>
+          <div class="totals">
+            <p>Selected Average Fat: <span id="selectedAvgFat">0</span> %</p>
+          </div>
+          <div class="table-controls">
+            <button id="addQualityEntryBtn" class="btn-purple"><i class="fas fa-plus"></i> Add Entry</button>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="date">Date <i class="fas fa-sort"></i></th>
+                  <th class="sortable" data-sort="quantity">Quantity (L) <i class="fas fa-sort"></i></th>
+                  <th class="sortable" data-sort="fat">Fat (%) <i class="fas fa-sort"></i></th>
+                  <th class="sortable" data-sort="grade">Quality Grade <i class="fas fa-sort"></i></th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="qualityTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ───── Payments TAB ───────── ▶ -->
+        <section id="payments" class="tab-content">
+          <h2>Payments</h2>
+          <div class="totals">
+            <p>Total Pending: <span id="totalPending">₹0</span></p>
+          </div>
+          <div class="table-controls">
+            <button id="addPaymentEntryBtn" class="btn-purple"><i class="fas fa-plus"></i> Add Entry</button>
+            <button id="exportPaymentsBtn" class="btn-blue">Export Payment History</button>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="selectAllPayments"> Mark Cleared</th>
+                  <th>Date</th>
+                  <th>Quantity (L)</th>
+                  <th>Payment (₹)</th>
+                  <th>
+                    <select id="paymentStatusFilter">
+                      <option value="all">All Statuses</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Cleared">Cleared</option>
+                    </select>
+                  </th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="paymentsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- Modals --------------------------------------------------- -->
+      <div id="supplierModal" class="modal">
+        <div class="modal-content">
+          <span class="close">×</span>
+          <h3>Add Supplier</h3>
+          <form id="supplierForm">
+            <input type="text" id="spId" placeholder="Supplier ID" required>
+            <input type="text" id="spName" placeholder="Name" required>
+            <input type="text" id="spContact" placeholder="Contact" required>
+            <input type="text" id="spLocation" placeholder="Location" required>
+            <input type="number" id="spCows" placeholder="No. of Cows" required>
+            <input type="number" id="spYield" placeholder="Avg. Yield (L)" step="0.1" required>
+            <select id="spStatus" required>
+              <option value="Active">Active</option>
+              <option value="New">New</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+            <button type="submit" class="btn-purple">Save Supplier</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="milkEntryModal" class="modal">
+        <div class="modal-content">
+          <span class="close">×</span>
+          <h3>Add Milk Entry</h3>
+          <form id="milkEntryForm">
+            <input type="date" id="newMilkDate" required>
+            <input type="number" id="newMilkQuantity" placeholder="Quantity (liters)" required>
+            <input type="number" id="newMilkFat" placeholder="Fat (%)" step="0.1" required>
+            <button type="submit" class="btn-purple">Save Entry</button>
+          </form>
+        </div>
+      </div>
       </div>
 
       <!-- Chilling Centers Content -->
