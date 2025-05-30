@@ -106,6 +106,23 @@ body {
   text-align: center;
   color: var(--text);
 }
+
+/* Rest of your existing CSS remains unchanged */
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 70px;
+}
+
 /* Top Section */
 .top-section {
   display: flex;
@@ -696,70 +713,60 @@ th {
 }
 
 /* Milk Collection Styles */
-.milk-container {
+/* ───────── General Layout ───────── */
+body {
+  margin: 0;
+  font-family: "Inter", Arial, sans-serif;
+  background: #f5f7fb;
+  color: #333;
+}
+
+.dashboard-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 30px auto;
   padding: 0 20px 40px;
-  background: var(--card);
+  background: #fff;
   border-radius: 12px;
   box-shadow: 0 0 12px rgba(0,0,0,0.08);
 }
 
-#milk-content h1 {
+h1 {
   text-align: center;
   margin-top: 25px;
   margin-bottom: 35px;
 }
 
-#milk-content .summary-cards {
+/* ───────── Summary Cards ───────── */
+.summary-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 18px;
   margin-bottom: 30px;
 }
 
-#milk-content .summary-card {
+.summary-card {
   padding: 25px 20px;
   border-radius: 10px;
   color: #fff;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0,0,0,0.06);
 }
+.summary-card .value {font-size: 28px; font-weight: 700;}
+.summary-card .label {font-size: 14px; opacity: 0.9;}
 
-#milk-content .summary-card .value {
-  font-size: 28px;
-  font-weight: 700;
-}
+.purple {background: #7152d9;}
+.blue   {background: #0d8bff;}
+.green  {background: #27c75b;}
+.red    {background: #e94444;}
 
-#milk-content .summary-card .label {
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-#milk-content .summary-card.purple {
-  background: var(--milk-purple);
-}
-
-#milk-content .summary-card.blue {
-  background: var(--primary);
-}
-
-#milk-content .summary-card.green {
-  background: var(--success);
-}
-
-#milk-content .summary-card.red {
-  background: var(--danger);
-}
-
-#milk-content .tabs {
+/* ───────── Tabs ───────── */
+.tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 25px;
 }
-
-#milk-content .tab {
+.tabs .tab {
   border: none;
   padding: 8px 18px;
   border-radius: 20px;
@@ -768,95 +775,79 @@ th {
   font-weight: 600;
   transition: background 0.2s;
 }
+.tabs .tab.active {background: #7152d9; color: #fff;}
 
-#milk-content .tab.active {
-  background: var(--milk-purple);
-  color: #fff;
-}
+/* ───────── Content Sections ───────── */
+.tab-content {display: none;}
+.tab-content.active {display: block;}
+.placeholder {text-align: center; margin-top: 40px; color: #777;}
 
-#milk-content .tab-content {
-  display: none;
-}
+/* ───────── Tables ───────── */
+.table-wrapper {overflow-x: auto;}
 
-#milk-content .tab-content.active {
-  display: block;
-}
-
-#milk-content .placeholder {
-  text-align: center;
-  margin-top: 40px;
-  color: #777;
-}
-
-#milk-content .suppliers-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-#milk-content .table-wrapper {
-  overflow-x: auto;
-}
-
-#milk-content table {
+table {
+  width: 100%;
+  border-collapse: collapse;
   min-width: 760px;
 }
 
-#milk-content thead {
+thead {
   background: #f2f2f2;
   text-transform: uppercase;
   font-size: 13px;
 }
 
-#milk-content th,
-#milk-content td {
+th, td {
   padding: 12px 14px;
   border: 1px solid #e2e2e2;
   text-align: center;
 }
 
-#milk-content .status {
+th.sortable {
+  cursor: pointer;
+  position: relative;
+}
+th.sortable:hover {background: #e0e0e0;}
+th.sortable .fa-sort {opacity: 0.5;}
+th.sortable.sorted-asc .fa-sort::before {content: "\f0de";} /* fa-sort-up */
+th.sortable.sorted-desc .fa-sort::before {content: "\f0dd";} /* fa-sort-down */
+
+/* Status badge */
+.status {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 14px;
   font-size: 12px;
   color: #fff;
 }
+.status.Active   {background: #27c75b;}
+.status.New      {background: #ffc107; color: #222;}
+.status.Inactive {background: #9e9e9e;}
+.status.Pending  {background: #e94444;}
+.status.Cleared  {background: #27c75b;}
+.status.A        {background: #27c75b;}
+.status.B        {background: #ffc107; color: #222;}
+.status.C        {background: #e94444;}
 
-#milk-content .status.Active {
-  background: var(--success);
-}
-
-#milk-content .status.New {
-  background: #ffc107;
-  color: #222;
-}
-
-#milk-content .status.Inactive {
-  background: #9e9e9e;
-}
-
-#milk-content .actions i {
+/* Action icons */
+.actions i {
   cursor: pointer;
   margin: 0 6px;
   font-size: 15px;
   transition: opacity 0.2s;
 }
+.actions i:hover {opacity: 0.7;}
 
-#milk-content .actions i:hover {
-  opacity: 0.7;
-}
-
-#milk-content .form-container {
+/* ───────── Form & Buttons ───────── */
+.form-container {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 18px;
 }
 
-#milk-content .form-container input,
-#milk-content .form-container select {
+.form-container input,
+.form-container select {
   padding: 10px 14px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -864,88 +855,76 @@ th {
   font-size: 15px;
 }
 
-#milk-content .btn-purple {
-  background: var(--milk-purple);
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 20px;
-  cursor: pointer;
+.table-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-#milk-content .btn-blue {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 20px;
-  cursor: pointer;
+.btn-purple {background: #7152d9; color: #fff; border: none; padding: 10px 16px; border-radius: 20px; cursor: pointer;}
+.btn-blue   {background: #0d8bff; color: #fff; border: none; padding: 10px 16px; border-radius: 20px; cursor: pointer;}
+.btn-green  {background: #27c75b; color: #fff; border: none; padding: 10px 16px; border-radius: 20px; cursor: pointer;}
+.btn-purple:hover, .btn-blue:hover, .btn-green:hover {opacity: 0.9;}
+
+/* Totals */
+.totals {font-weight: 600; margin-bottom: 15px; font-size: 15px;}
+.totals p {margin: 4px 0;}
+
+/* ───────── Modal ───────── */
+.modal {
+  display: none;
+  position: fixed;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
 }
 
-#milk-content .btn-green {
-  background: var(--success);
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-#milk-content .btn-purple:hover,
-#milk-content .btn-blue:hover,
-#milk-content .btn-green:hover {
-  opacity: 0.9;
-}
-
-#milk-content .totals {
-  font-weight: 600;
-  margin-bottom: 15px;
-  font-size: 15px;
-}
-
-#milk-content .totals p {
-  margin: 4px 0;
-}
-
-#milk-content .modal-content {
-  background: var(--card);
-  width: 90%;
-  max-width: 440px;
+.modal-content {
+  background: #fff;
+  width: 90%; max-width: 440px;
   margin: 8% auto;
   padding: 25px 30px;
   border-radius: 10px;
   box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
-#milk-content .modal-content h3 {
-  margin-top: 0;
-  text-align: center;
+.modal-content h3 {margin-top: 0; text-align: center;}
+.modal-content input, .modal-content select {width: 100%; margin-bottom: 12px;}
+.modal-content .close {
+  float: right; font-size: 24px; cursor: pointer; color: #999;
 }
+.modal-content .close:hover {color: #000;}
+.modal-content p {margin-bottom: 20px;}
+.modal-content button {margin: 0 10px;}
 
-#milk-content .modal-content input,
-#milk-content .modal-content select {
-  width: 100%;
-  margin-bottom: 12px;
-}
-
-#milk-content .modal-content .close {
-  float: right;
-  font-size: 24px;
+/* Checkbox styling */
+input[type="checkbox"] {
   cursor: pointer;
-  color: #999;
+  width: 16px;
+  height: 16px;
 }
 
-#milk-content .modal-content .close:hover {
-  color: var(--text);
+/* Status filter in table */
+th select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 13px;
 }
 
-@media (max-width: 600px) {
-  #milk-content .summary-cards {
-    grid-template-columns: 1fr 1fr;
-  }
-  #milk-content table {
-    font-size: 13px;
-  }
+/* Header styling */
+.suppliers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 600px){
+  .summary-cards {grid-template-columns: 1fr 1fr;}
+  table {font-size: 13px;}
+  .table-controls {flex-wrap: wrap;}
 }
 
 /* Chilling Centers Styles */
@@ -957,8 +936,8 @@ th {
   border-radius: 12px;
   box-shadow: 0 0 12px rgba(0,0,0,0.08);
   overflow-x: hidden; /* Prevent horizontal overflow */
-  min-height: 100%; 
-  height: auto; 
+  min-height: 100%; /* Ensure it takes at least full viewport height */
+  height: auto; /* Allow height to expand with content */
   display: flex;
   flex-direction: column;
 }
@@ -1039,7 +1018,7 @@ th {
   overflow-x: auto; /* Allow scrolling for wide content */
   width: 100%;
   box-sizing: border-box;
-  height: auto; 
+  height: auto; /* Dynamic height */
   max-height: none; /* Remove any height caps */
 }
 
@@ -1145,8 +1124,8 @@ body.dark #chilling-content .grade.B {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  flex: 1; 
-  min-height: 0; 
+  flex: 1; /* Allow stacking within flex container */
+  min-height: 0; /* Prevent shrinking issues */
 }
 
 #chilling-content .form h4 {
@@ -1209,10 +1188,10 @@ body.dark #chilling-content .grade.B {
   border-radius: 6px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   width: 100%;
-  max-width: 100%; 
-  height: auto; 
-  min-height: 250px; 
-  max-height: 300px; 
+  max-width: 100%; /* Prevent chart overflow */
+  height: auto; /* Allow dynamic height */
+  min-height: 250px; /* Minimum height for charts */
+  max-height: 300px; /* Cap height to prevent excessive growth */
   overflow: visible; /* Allow chart to render fully */
 }
 
@@ -1228,7 +1207,7 @@ body.dark #chilling-content .grade.B {
   max-width: 100%; /* Ensure canvas respects container */
   width: 100% !important;
   height: 100% !important; /* Scale with container */
-  max-height: 280px; 
+  max-height: 280px; /* Prevent excessive chart height */
 }
 
 @media (max-width: 768px) {
@@ -1332,7 +1311,7 @@ body.dark #chilling-content .grade.B {
 /* Processing Plants Styles */
 #processing-content {
   :root {
-    --milk-purple: #8e44ad; /*Processing Plants-specific color */
+    --milk-purple: #8e44ad; /* Define Processing Plants-specific color */
   }
 
   body.dark {
@@ -1354,7 +1333,7 @@ body.dark #chilling-content .grade.B {
   .processing-container h1 {
     text-align: center;
     font-size: 1.8rem;
-    color: var(--text); /*ATS Admin Dashboard's text color */
+    color: var(--text); /* Use ATS Admin Dashboard's text color */
     font-weight: 600;
   }
 
@@ -1917,7 +1896,7 @@ body.dark #chilling-content .grade.B {
   .metric p {
     font-size: 11px;
     margin-top: 3px;
-    color: var(--text); /*ATS text color */
+    color: var(--text); /* Use ATS text color */
   }
 
   .mini-chart {
@@ -2001,7 +1980,7 @@ body.dark #chilling-content .grade.B {
   }
 
   .record button {
-    background: var(--error); /*ATS error color (red) */
+    background: var(--error); /* Use ATS error color (red) */
     color: #fff;
     border: none;
     padding: 5px;
