@@ -63,12 +63,10 @@ document.querySelectorAll('.menu li').forEach(item => {
     } else if (sectionToShow === 'distribution') {
       document.getElementById('distribution-content').style.display = 'block';
       initDistribution();
-    } else if (sectionToShow === 'logout') {
-      if (confirm('Are you sure you want to log out?')) {
-        localStorage.removeItem('theme');
-        window.location.href = '/logout';
-      }
-    }  else {
+    } else if (sectionToShow === 'settings') {
+      document.getElementById('settings-content').style.display = 'block';
+      initSettings();
+    } else {
       const iframe = document.getElementById('content-iframe');
       iframe.style.display = 'block';
       iframe.src = `${sectionToShow}.html`;
@@ -80,87 +78,18 @@ document.querySelectorAll('.menu li').forEach(item => {
 
 // Initialize Dashboard Charts
 function initDashboardCharts() {
-  function createGauge(ctxId, value, color) {
-    new Chart(document.getElementById(ctxId), {
-      type: 'doughnut',
-      data: {
-        datasets: [{
-          data: [value, 100 - value],
-          backgroundColor: [color, getComputedStyle(document.documentElement).getPropertyValue('--gauge-empty').trim()],
-          borderWidth: 1,
-          borderColor: '#ddd'
-        }]
-      },
-      options: {
-        rotation: -90,
-        circumference: 180,
-        cutout: '70%',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          tooltip: { enabled: false },
-          legend: { display: false },
-          datalabels: {
-            display: true,
-            formatter: () => `${value}%`,
-            color: getComputedStyle(document.documentElement).getPropertyValue('--text').trim(),
-            font: { weight: 'bold', size: 14 },
-            anchor: 'center',
-            align: 'center'
-          }
-        }
-      },
-      plugins: [{
-        id: 'gaugeBackground',
-        beforeDraw: chart => {
-          const { ctx, chartArea } = chart;
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(
-            chartArea.left + chartArea.width / 2,
-            chartArea.top + chartArea.height,
-            chartArea.width / 2.2,
-            Math.PI,
-            2 * Math.PI,
-            false
-          );
-          ctx.lineWidth = 10;
-          ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--gauge-empty').trim();
-          ctx.stroke();
-          ctx.restore();
-        }
-      }]
-    });
-  }
 
-  createGauge('gauge1', 75, '#28a745');
-  createGauge('gauge2', 82, '#007bff');
-  createGauge('gauge3', 55, '#ffc107');
-  createGauge('gauge4', 65, '#17a2b8');
-  createGauge('gauge5', 90, '#20c997');
-  createGauge('gauge6', 95, '#6610f2');
-  createGauge('gauge7', 70, '#fd7e14');
-  createGauge('gauge8', 85, '#dc3545');
-
-  new Chart(document.getElementById('monthlyMilkChart').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      datasets: [
-        { label: 'Cow Milk (L)', backgroundColor: '#007bff', data: [3000, 3500, 4000, 3700, 4200, 5000, 5200, 4800, 4600, 4900, 5100, 5300] },
-        { label: 'Buffalo Milk (L)', backgroundColor: '#28a745', data: [1500, 1800, 2000, 1900, 2100, 2500, 2700, 2600, 2500, 2450, 2400, 2600] }
-      ]
-    },
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } },
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 12 }, color: getComputedStyle(document.documentElement).getPropertyValue('--text').trim() } }
-      }
+  // Common chart options
+  const chartOptions = {
+    responsive: true,
+    scales: { y: { beginAtZero: true } },
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 12 }, color: getComputedStyle(document.documentElement).getPropertyValue('--text').trim() } }
     }
-  });
+  };
 
-  new Chart(document.getElementById('dailyMilkChart').getContext('2d'), {
+  // Daily Charts
+  new Chart(document.getElementById('dailyMilkChartBar'), {
     type: 'bar',
     data: {
       labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -169,44 +98,415 @@ function initDashboardCharts() {
         { label: 'Buffalo Milk (L)', backgroundColor: '#17a2b8', data: [500, 520, 560, 540, 580, 600, 590] }
       ]
     },
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } },
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 12 }, color: getComputedStyle(document.documentElement).getPropertyValue('--text').trim() } }
-      }
-    }
+    options: chartOptions
+  });
+
+  new Chart(document.getElementById('dailyMilkChartLine'), {
+    type: 'line',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [
+        { label: 'Cow Milk (L)', borderColor: '#ffc107', data: [900, 950, 1000, 980, 1020, 1100, 1050], fill: false },
+        { label: 'Buffalo Milk (L)', borderColor: '#17a2b8', data: [500, 520, 560, 540, 580, 600, 590], fill: false }
+      ]
+    },
+    options: chartOptions
+  });
+
+  // Weekly Charts
+  new Chart(document.getElementById('weeklyMilkChartBar'), {
+    type: 'bar',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [
+        { label: 'Cow Milk (L)', backgroundColor: '#ff5733', data: [6500, 6800, 7000, 7200] },
+        { label: 'Buffalo Milk (L)', backgroundColor: '#c70039', data: [3500, 3600, 3700, 3800] }
+      ]
+    },
+    options: chartOptions
+  });
+
+  new Chart(document.getElementById('weeklyMilkChartLine'), {
+    type: 'line',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [
+        { label: 'Cow Milk (L)', borderColor: '#ff5733', data: [6500, 6800, 7000, 7200], fill: false },
+        { label: 'Buffalo Milk (L)', borderColor: '#c70039', data: [3500, 3600, 3700, 3800], fill: false }
+      ]
+    },
+    options: chartOptions
+  });
+
+  // Monthly Charts
+  new Chart(document.getElementById('monthlyMilkChartBar'), {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [
+        { label: 'Cow Milk (L)', backgroundColor: '#007bff', data: [3000, 3500, 4000, 3700, 4200, 5000, 5200, 4800, 4600, 4900, 5100, 5300] },
+        { label: 'Buffalo Milk (L)', backgroundColor: '#28a745', data: [1500, 1800, 2000, 1900, 2100, 2500, 2700, 2600, 2500, 2450, 2400, 2600] }
+      ]
+    },
+    options: chartOptions
+  });
+
+  new Chart(document.getElementById('monthlyMilkChartLine'), {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [
+        { label: 'Cow Milk (L)', borderColor: '#007bff', data: [3000, 3500, 4000, 3700, 4200, 5000, 5200, 4800, 4600, 4900, 5100, 5300], fill: false },
+        { label: 'Buffalo Milk (L)', borderColor: '#28a745', data: [1500, 1800, 2000, 1900, 2100, 2500, 2700, 2600, 2500, 2450, 2400, 2600], fill: false }
+      ]
+    },
+    options: chartOptions
+  });
+
+  // Filter button interactivity
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const chartCards = document.querySelectorAll('.chart-card');
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all buttons
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      // Add active class to clicked button
+      button.classList.add('active');
+
+      // Get filter type (daily, weekly, monthly)
+      const filter = button.getAttribute('data-filter');
+
+      // Hide all charts and show only the relevant ones
+      chartCards.forEach(card => {
+        card.classList.remove('active');
+        if (card.classList.contains(`${filter}-charts`)) {
+          card.classList.add('active');
+        }
+      });
+    });
   });
 }
 
 // Initialize Farmer Management Charts
-function initFarmerCharts() {
-  new Chart(document.getElementById('donutChart').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Active', 'Inactive'],
-      datasets: [{ data: [4860, 340], backgroundColor: ['#28a745', '#dc3545'], hoverOffset: 20 }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } }
-    }
-  });
+const FarmerManagement = {
+  farmers: [
+    { name: "Ramesh Kumar", village: "Narsapuram", milkSupplied: 1250, rating: 5, status: "Active", contact: "+919876543210" },
+    { name: "Suresh Reddy", village: "Kothapalle", milkSupplied: 900, rating: 4, status: "Active", contact: "+919876543211" },
+    { name: "Anil Sharma", village: "Medak", milkSupplied: 600, rating: 3, status: "Inactive", contact: "+919876543212" },
+    { name: "Vijay Patel", village: "Suryapet", milkSupplied: 1100, rating: 4, status: "Active", contact: "+919876543213" },
+    { name: "Kiran Rao", village: "Warangal", milkSupplied: 800, rating: 2, status: "Inactive", contact: "+919876543214" }
+  ],
+  sortDirection: 1,
+  sortColumn: -1,
+  editIndex: -1,
+  donutChartInstance: null,
+  barChartInstance: null,
+  filteredFarmers: [], // Track the currently displayed farmers
 
-  new Chart(document.getElementById('barChart').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: ['Andhra Pradesh', 'Telangana', 'Karnataka', 'Tamil Nadu'],
-      datasets: [{ label: 'Milk Supplied (L)', data: [12000, 9500, 8300, 7800], backgroundColor: '#007bff' }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: { y: { beginAtZero: true } }
+  init() {
+    const initialize = () => {
+      const farmerTableBody = document.getElementById("fm-farmerTableBody");
+      const searchButton = document.querySelector("#fm-searchInput + button");
+      const addFarmerButton = document.getElementById("fm-addFarmerButton");
+
+      if (!farmerTableBody || !searchButton || !addFarmerButton) {
+        console.error("Farmer Management: Required DOM elements not found. Retrying...");
+        setTimeout(initialize, 100);
+        return;
+      }
+
+      // Bind event listeners
+      searchButton.addEventListener("click", this.searchFarmers.bind(this));
+      addFarmerButton.addEventListener("click", this.openAddFarmerModal.bind(this));
+
+      // Initial render of table and charts
+      this.filteredFarmers = [...this.farmers]; // Initially, show all farmers
+      this.renderTable(this.filteredFarmers);
+      this.updateStats();
+      this.initCharts();
+    };
+
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      initialize();
+    } else {
+      document.addEventListener("DOMContentLoaded", initialize);
     }
-  });
-}
+  },
+
+  renderTable(farmers) {
+    const tbody = document.getElementById("fm-farmerTableBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    farmers.forEach((farmer, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${farmer.name}</td>
+        <td>${farmer.village}</td>
+        <td>${farmer.milkSupplied}</td>
+        <td>${this.renderStars(farmer.rating)}</td>
+        <td class="status-${farmer.status.toLowerCase()}">${farmer.status}</td>
+        <td>
+          <span class="delete" onclick="FarmerManagement.deleteFarmer(${index})"><i class="fas fa-trash-alt"></i></span>
+          <span class="edit" onclick="FarmerManagement.editFarmer(${index})"><i class="fas fa-edit"></i></span>
+          <button onclick="FarmerManagement.viewFarmer(${index})">View</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    // Update charts after rendering the table
+    this.updateCharts();
+  },
+
+  renderStars(rating) {
+    let stars = "";
+    for (let i = 1; i <= 5; i++) {
+      stars += `<span class="${i <= rating ? 'star' : 'star-empty'}">★</span>`;
+    }
+    return stars;
+  },
+
+  updateStats() {
+    const totalFarmers = this.farmers.length;
+    const activeFarmers = this.farmers.filter(f => f.status === "Active").length;
+    const kycVerified = this.farmers.filter(f => f.contact.startsWith("+91")).length;
+    const regions = [...new Set(this.farmers.map(f => f.village))];
+    const topRegion = regions.reduce((top, region) => {
+      const milk = this.farmers.filter(f => f.village === region).reduce((sum, f) => sum + f.milkSupplied, 0);
+      return milk > (top.milk || 0) ? { region, milk } : top;
+    }, { region: "N/A", milk: 0 });
+
+    document.getElementById("fm-totalFarmers").textContent = totalFarmers.toLocaleString();
+    document.getElementById("fm-activeFarmers").textContent = activeFarmers.toLocaleString();
+    document.getElementById("fm-kycVerified").textContent = kycVerified.toLocaleString();
+    document.getElementById("fm-topRegion").textContent = topRegion.region;
+  },
+
+  initCharts() {
+    const donutCtx = document.getElementById("fm-donutChart")?.getContext("2d");
+    const barCtx = document.getElementById("fm-barChart")?.getContext("2d");
+
+    if (!donutCtx || !barCtx) {
+      console.error("Chart canvases not found.");
+      return;
+    }
+
+    // Destroy existing chart instances if they exist
+    if (this.donutChartInstance) this.donutChartInstance.destroy();
+    if (this.barChartInstance) this.barChartInstance.destroy();
+
+    // Initial chart rendering (will be updated in updateCharts)
+    this.donutChartInstance = new Chart(donutCtx, {
+      type: "doughnut",
+      data: {
+        labels: ["Active", "Inactive"],
+        datasets: [{
+          data: [0, 0], // Placeholder data
+          backgroundColor: ["#28a745", "#dc3545"],
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "top" } }
+      }
+    });
+
+    this.barChartInstance = new Chart(barCtx, {
+      type: "bar",
+      data: {
+        labels: [],
+        datasets: [{
+          label: "Milk Supplied (L)",
+          data: [],
+          backgroundColor: "#007bff",
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Update charts with initial data
+    this.updateCharts();
+  },
+
+  updateCharts() {
+    if (!this.donutChartInstance || !this.barChartInstance) return;
+
+    // Update doughnut chart (Active vs Inactive) based on filtered farmers
+    const activeFarmers = this.filteredFarmers.filter(f => f.status === "Active").length;
+    const inactiveFarmers = this.filteredFarmers.length - activeFarmers;
+    this.donutChartInstance.data.datasets[0].data = [activeFarmers, inactiveFarmers];
+    this.donutChartInstance.update();
+
+    // Update bar chart (Milk Supplied per Region) based on filtered farmers
+    const regions = [...new Set(this.filteredFarmers.map(f => f.village))];
+    const milkByRegion = regions.map(region =>
+      this.filteredFarmers.filter(f => f.village === region).reduce((sum, f) => sum + f.milkSupplied, 0)
+    );
+    this.barChartInstance.data.labels = regions;
+    this.barChartInstance.data.datasets[0].data = milkByRegion;
+    this.barChartInstance.update();
+  },
+
+  sortTable(column) {
+    this.sortColumn = column;
+    this.sortDirection *= -1;
+    const headers = document.querySelectorAll("#fm-farmerTable th");
+    headers.forEach((header, index) => {
+      header.classList.remove("sort-asc", "sort-desc");
+      if (index === column) {
+        header.classList.add(this.sortDirection === 1 ? "sort-asc" : "sort-desc");
+      }
+    });
+
+    const sortedFarmers = [...this.filteredFarmers].sort((a, b) => {
+      const values = [
+        a.name, a.village, a.milkSupplied, a.rating, a.status
+      ];
+      const valA = values[column];
+      const valB = b[Object.keys(b)[column]];
+      if (typeof valA === "number") return this.sortDirection * (valA - valB);
+      return this.sortDirection * valA.localeCompare(valB);
+    });
+
+    this.filteredFarmers = sortedFarmers;
+    this.renderTable(this.filteredFarmers);
+  },
+
+  searchFarmers() {
+    const query = document.getElementById("fm-searchInput").value.toLowerCase();
+    this.filteredFarmers = this.farmers.filter(f =>
+      f.name.toLowerCase().includes(query) || f.village.toLowerCase().includes(query)
+    );
+    this.renderTable(this.filteredFarmers);
+  },
+
+  openAddFarmerModal() {
+    const modal = document.getElementById("fm-addFarmerModal");
+    if (!modal) return;
+
+    this.editIndex = -1;
+    document.getElementById("fm-addFarmerModalTitle").textContent = "Add New Farmer";
+    document.getElementById("fm-addFarmerBtn").textContent = "Add Farmer";
+    document.getElementById("fm-newName").value = "";
+    document.getElementById("fm-newVillage").value = "";
+    document.getElementById("fm-newMilk").value = "";
+    document.getElementById("fm-newRating").value = "1";
+    document.getElementById("fm-newStatus").value = "Active";
+    document.getElementById("fm-newContact").value = "";
+    this.clearErrors();
+    modal.style.display = "flex";
+  },
+
+  editFarmer(index) {
+    const modal = document.getElementById("fm-addFarmerModal");
+    if (!modal) return;
+
+    this.editIndex = index;
+    const farmer = this.filteredFarmers[index];
+    document.getElementById("fm-addFarmerModalTitle").textContent = "Edit Farmer";
+    document.getElementById("fm-addFarmerBtn").textContent = "Update Farmer";
+    document.getElementById("fm-newName").value = farmer.name;
+    document.getElementById("fm-newVillage").value = farmer.village;
+    document.getElementById("fm-newMilk").value = farmer.milkSupplied;
+    document.getElementById("fm-newRating").value = farmer.rating;
+    document.getElementById("fm-newStatus").value = farmer.status;
+    document.getElementById("fm-newContact").value = farmer.contact;
+    this.clearErrors();
+    modal.style.display = "flex";
+  },
+
+  addOrUpdateFarmer() {
+    const name = document.getElementById("fm-newName").value.trim();
+    const village = document.getElementById("fm-newVillage").value.trim();
+    const milkSupplied = parseFloat(document.getElementById("fm-newMilk").value);
+    const rating = parseInt(document.getElementById("fm-newRating").value);
+    const status = document.getElementById("fm-newStatus").value;
+    const contact = document.getElementById("fm-newContact").value.trim();
+
+    this.clearErrors();
+    let hasError = false;
+
+    if (!name) {
+      document.getElementById("fm-nameError").textContent = "Name is required.";
+      document.getElementById("fm-nameError").style.display = "block";
+      hasError = true;
+    }
+    if (!village) {
+      document.getElementById("fm-villageError").textContent = "Village is required.";
+      document.getElementById("fm-villageError").style.display = "block";
+      hasError = true;
+    }
+    if (isNaN(milkSupplied) || milkSupplied <= 0) {
+      document.getElementById("fm-milkError").textContent = "Valid milk supplied amount is required.";
+      document.getElementById("fm-milkError").style.display = "block";
+      hasError = true;
+    }
+    if (!contact || !/^\+\d{11,12}$/.test(contact)) {
+      document.getElementById("fm-contactError").textContent = "Valid contact number is required (e.g., +919876543210).";
+      document.getElementById("fm-contactError").style.display = "block";
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    const farmer = { name, village, milkSupplied, rating, status, contact };
+    if (this.editIndex === -1) {
+      this.farmers.push(farmer);
+    } else {
+      const actualIndex = this.farmers.findIndex(f => f === this.filteredFarmers[this.editIndex]);
+      this.farmers[actualIndex] = farmer;
+    }
+
+    this.filteredFarmers = [...this.farmers]; // Reset filtered farmers after add/edit
+    this.renderTable(this.filteredFarmers);
+    this.updateStats();
+    this.closeModal();
+  },
+
+  deleteFarmer(index) {
+    if (confirm("Are you sure you want to delete this farmer?")) {
+      const actualIndex = this.farmers.findIndex(f => f === this.filteredFarmers[index]);
+      this.farmers.splice(actualIndex, 1);
+      this.filteredFarmers = [...this.farmers];
+      this.renderTable(this.filteredFarmers);
+      this.updateStats();
+    }
+  },
+
+  viewFarmer(index) {
+    const modal = document.getElementById("fm-farmerModal");
+    if (!modal) return;
+
+    const farmer = this.filteredFarmers[index];
+    document.getElementById("fm-modalVillage").textContent = farmer.village;
+    document.getElementById("fm-modalMilk").textContent = farmer.milkSupplied;
+    document.getElementById("fm-modalRating").textContent = farmer.rating;
+    document.getElementById("fm-modalStatus").textContent = farmer.status;
+    document.getElementById("fm-modalContact").textContent = farmer.contact;
+    modal.style.display = "flex";
+  },
+
+  closeModal() {
+    document.getElementById("fm-farmerModal").style.display = "none";
+    document.getElementById("fm-addFarmerModal").style.display = "none";
+  },
+
+  clearErrors() {
+    document.querySelectorAll(".error-message").forEach(error => {
+      error.style.display = "none";
+      error.textContent = "";
+    });
+  }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  FarmerManagement.init();
+});
 
 // Initialize CRM
 function initCRM() {
@@ -2465,6 +2765,251 @@ function distributionSearchShipments() {
 function distributionSetTimestamp() {
   document.getElementById('distribution-timestamp').textContent = 'Updated at ' + new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
 }
+function initSettings() {
+  const settingsForm = document.getElementById('settingsForm');
+  const themeSelect = document.getElementById('themeSelect');
+  const languageSelect = document.getElementById('languageSelect');
+  const timeFormat = document.getElementById('timeFormat');
+  const milkBaseRate = document.getElementById('milkBaseRate');
+  const fatBonus = document.getElementById('fatBonus');
+  const gradeAFatThreshold = document.getElementById('gradeAFatThreshold');
+  const gradeBFatThreshold = document.getElementById('gradeBFatThreshold');
+  const userName = document.getElementById('userName');
+  const userEmail = document.getElementById('userEmail');
+  const profilePic = document.getElementById('profilePic');
+  const profilePicPreview = document.getElementById('profilePicPreview');
+  const resetSettings = document.getElementById('resetSettings');
+  const resetModal = document.getElementById('resetModal');
+  const confirmReset = document.getElementById('confirmReset');
+  const cancelReset = document.getElementById('cancelReset');
+
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  function trapFocus(modal) {
+    const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    modal.addEventListener('keydown', e => {
+      if (e.key === 'Tab') {
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+    first.focus();
+  }
+
+  const validateTheme = () => ['light', 'dark', 'system'].includes(themeSelect.value);
+  const validateLanguage = () => ['en', 'hi'].includes(languageSelect.value);
+  const validateTimeFormat = () => ['12', '24'].includes(timeFormat.value);
+  const validateMilkBaseRate = () => {
+    const value = parseFloat(milkBaseRate.value);
+    return !isNaN(value) && value > 0;
+  };
+  const validateFatBonus = () => {
+    const value = parseFloat(fatBonus.value);
+    return !isNaN(value) && value >= 0;
+  };
+  const validateQualityThresholds = () => {
+    const a = parseFloat(gradeAFatThreshold.value);
+    const b = parseFloat(gradeBFatThreshold.value);
+    return !isNaN(a) && !isNaN(b) && a > b && b > 0;
+  };
+  const validateName = () => {
+    const value = userName.value.trim();
+    return /^[a-zA-Z\s]{2,}$/.test(value);
+  };
+  const validateEmail = () => {
+    const value = userEmail.value.trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  };
+  const validateProfilePic = () => {
+    if (!profilePic.files[0]) return true;
+    const file = profilePic.files[0];
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const maxSize = 5 * 1024 * 1024;
+    return validTypes.includes(file.type) && file.size <= maxSize;
+  };
+
+  const validateField = (field, validateFn, errorId) => {
+    const error = document.getElementById(errorId);
+    const isValid = validateFn();
+    field.classList.toggle('invalid', !isValid);
+    error.style.display = isValid ? 'none' : 'block';
+    return isValid;
+  };
+
+  milkBaseRate.addEventListener('input', () => validateField(milkBaseRate, validateMilkBaseRate, 'milkBaseRateError'));
+  fatBonus.addEventListener('input', () => validateField(fatBonus, validateFatBonus, 'fatBonusError'));
+  gradeAFatThreshold.addEventListener('input', () => validateField(gradeAFatThreshold, validateQualityThresholds, 'gradeAFatThresholdError'));
+  gradeBFatThreshold.addEventListener('input', () => {
+    validateField(gradeBFatThreshold, validateQualityThresholds, 'gradeBFatThresholdError');
+    validateField(gradeAFatThreshold, validateQualityThresholds, 'gradeAFatThresholdError');
+  });
+  userName.addEventListener('input', () => validateField(userName, validateName, 'userNameError'));
+  userEmail.addEventListener('input', () => validateField(userEmail, validateEmail, 'userEmailError'));
+
+  const savedSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+  const defaultSettings = {
+    theme: 'light',
+    language: 'en',
+    timeFormat: '24',
+    milkBaseRate: 0.50,
+    fatBonus: 0.10,
+    gradeAFatThreshold: 4.0,
+    gradeBFatThreshold: 3.0,
+    userName: '',
+    userEmail: '',
+    profilePic: ''
+  };
+  const settings = { ...defaultSettings, ...savedSettings };
+  themeSelect.value = settings.theme;
+  languageSelect.value = settings.language;
+  timeFormat.value = settings.timeFormat;
+  milkBaseRate.value = settings.milkBaseRate;
+  fatBonus.value = settings.fatBonus;
+  gradeAFatThreshold.value = settings.gradeAFatThreshold;
+  gradeBFatThreshold.value = settings.gradeBFatThreshold;
+  userName.value = settings.userName;
+  userEmail.value = settings.userEmail;
+  if (settings.profilePic) {
+    profilePicPreview.src = settings.profilePic;
+    profilePicPreview.style.display = 'block';
+  }
+
+  const applyTheme = () => {
+    const theme = themeSelect.value;
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.body.classList.toggle('dark', prefersDark);
+      localStorage.setItem('theme', prefersDark ? 'dark' : 'light');
+    } else {
+      document.body.classList.toggle('dark', theme === 'dark');
+      localStorage.setItem('theme', theme);
+    }
+  };
+  applyTheme();
+  themeSelect.addEventListener('change', applyTheme);
+
+  profilePic.addEventListener('change', () => {
+    if (validateProfilePic()) {
+      const file = profilePic.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          profilePicPreview.src = reader.result;
+          profilePicPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      profilePic.value = '';
+      showToast('Invalid image file. Use JPEG, PNG, or GIF, max 5MB.', 'danger');
+    }
+  });
+
+  settingsForm.addEventListener('submit', e => {
+    e.preventDefault();
+    let valid = true;
+    if (!validateTheme()) {
+      showToast('Please select a valid theme.', 'danger');
+      valid = false;
+    }
+    if (!validateLanguage()) {
+      showToast('Please select a valid language.', 'danger');
+      valid = false;
+    }
+    if (!validateTimeFormat()) {
+      showToast('Please select a valid time format.', 'danger');
+      valid = false;
+    }
+    if (!validateMilkBaseRate()) {
+      showToast('Milk base rate must be greater than 0.', 'danger');
+      valid = false;
+    }
+    if (!validateFatBonus()) {
+      showToast('Fat bonus must be non-negative.', 'danger');
+      valid = false;
+    }
+    if (!validateQualityThresholds()) {
+      showToast('Grade A threshold must be greater than Grade B, and both must be positive.', 'danger');
+      valid = false;
+    }
+    if (!validateName()) {
+      showToast('Name must be at least 2 characters, letters and spaces only.', 'danger');
+      valid = false;
+    }
+    if (!validateEmail()) {
+      showToast('Please enter a valid email address.', 'danger');
+      valid = false;
+    }
+    if (!validateProfilePic()) {
+      showToast('Please select a valid image file (JPEG, PNG, GIF, max 5MB).', 'danger');
+      valid = false;
+    }
+    if (!valid) return;
+    const newSettings = {
+      theme: themeSelect.value,
+      language: languageSelect.value,
+      timeFormat: timeFormat.value,
+      milkBaseRate: parseFloat(milkBaseRate.value),
+      fatBonus: parseFloat(fatBonus.value),
+      gradeAFatThreshold: parseFloat(gradeAFatThreshold.value),
+      gradeBFatThreshold: parseFloat(gradeBFatThreshold.value),
+      userName: userName.value.trim(),
+      userEmail: userEmail.value.trim(),
+      profilePic: profilePicPreview.src
+    };
+    localStorage.setItem('userSettings', JSON.stringify(newSettings));
+    showToast('Settings saved successfully!');
+  });
+
+  resetSettings.addEventListener('click', () => {
+    resetModal.style.display = 'flex';
+    trapFocus(resetModal);
+  });
+  confirmReset.addEventListener('click', () => {
+    localStorage.removeItem('userSettings');
+    settingsForm.reset();
+    themeSelect.value = defaultSettings.theme;
+    languageSelect.value = defaultSettings.language;
+    timeFormat.value = defaultSettings.timeFormat;
+    milkBaseRate.value = defaultSettings.milkBaseRate;
+    fatBonus.value = defaultSettings.fatBonus;
+    gradeAFatThreshold.value = defaultSettings.gradeAFatThreshold;
+    gradeBFatThreshold.value = defaultSettings.gradeBFatThreshold;
+    profilePicPreview.src = '';
+    profilePicPreview.style.display = 'none';
+    applyTheme();
+    resetModal.style.display = 'none';
+    showToast('Settings reset to defaults.');
+    document.querySelectorAll('.form-control').forEach(field => field.classList.remove('invalid'));
+    document.querySelectorAll('.error-message').forEach(error => error.style.display = 'none');
+  });
+  cancelReset.addEventListener('click', () => {
+    resetModal.style.display = 'none';
+  });
+  resetModal.addEventListener('click', e => {
+    if (e.target === resetModal) {
+      resetModal.style.display = 'none';
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('settings-content').style.display === 'block') {
+    initSettings();
+  }
+});
 
 // Initialize on Page Load
 document.addEventListener('DOMContentLoaded', () => {
