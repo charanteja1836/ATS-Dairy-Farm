@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ATS Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    .page-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      width: 100%;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      max-width: 1200px;
+      margin: auto;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: 90%;
+    }
+
+    .left-content {
+      flex: 1;
+      padding: 3rem;
+      background: linear-gradient(135deg, #1a73e8, #4a90e2);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .left-content::before,
+    .left-content::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 0;
+    }
+
+    .left-content::before {
+      width: 150px;
+      height: 150px;
+      top: -50px;
+      left: -50px;
+    }
+
+    .left-content::after {
+      width: 100px;
+      height: 100px;
+      bottom: -30px;
+      right: -30px;
+    }
+
+    .left-content h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+      z-index: 1;
+    }
+
+    .left-content p {
+      font-size: 1rem;
+      font-weight: 400;
+      max-width: 320px;
+      margin-top: 1rem;
+      line-height: 1.5;
+      z-index: 1;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .form-section {
+      display: none;
+      background: #f7f9fc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .form-section h2 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      color: #1877F2;
+    }
+
+    .form-group {
+      margin-bottom: 0.8rem;
+      text-align: left;
+      position: relative;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.6rem 2.5rem 0.6rem 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      height: 40px;
+      background: #fff;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #1877F2;
+      box-shadow: 0 0 5px rgba(24, 119, 242, 0.3);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.2rem;
+      user-select: none;
+    }
+
+    .signup-btn, .login-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: #1877F2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      height: 40px;
+    }
+
+    .signup-btn:hover, .login-btn:hover {
+      background: #166FE5;
+    }
+
+    .toggle-link, .forgot-password {
+      font-size: 0.8rem;
+      color: #1877F2;
+      text-decoration: none;
+      display: block;
+      margin-top: 0.5rem;
+    }
+
+    .toggle-link:hover, .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    #fileInput {
+      border: 2px dotted #aaa;
+      padding: 6px;
+      border-radius: 6px;
+      background: #fafafa;
+      height: 40px;
+      width: 100%;
+    }
+
+    .signup-header {
+      display: none;
+      margin-bottom: 1rem;
+    }
+
+    .signup-header.active {
+      display: block;
+    }
+
+    .signup-header h2 {
+      font-size: 1.2rem;
+      color: #000;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .signup-header p {
+      font-size: 0.9rem;
+      color: #888;
+      margin: 0.3rem 0;
+    }
+
+    .signup-header hr {
+      border: 0;
+      height: 1px;
+      background: #ddd;
+      margin: 0.8rem 0;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #888;
+      padding: 1rem;
+      margin-top: auto;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.8rem;
+      margin-top: 0.2rem;
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        border-radius: 0;
+      }
+
+      .left-content {
+        align-items: center;
+        text-align: center;
+      }
+
+      .login-container {
+        max-width: 100%;
+        padding: 2rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="left-content">
+        <h1>Astrolite Tech Solutions</h1>
+        <p>For a bright future, we stand together — driven by purpose, powered by technology.</p>
+      </div>
+
+      <div class="login-container">
+        <div id="loginSection" class="form-section active">
+          <h2>Sign In</h2>
+          <form id="loginForm">
+            <div class="form-group">
+              <input type="text" id="emailPhone" placeholder="Email Address" required>
+              <div id="emailPhoneError" class="error"></div>
+            </div>
+            <div class="form-group">
+              <input type="password" id="password" placeholder="Password" required>
+              <span class="password-toggle" onclick="togglePassword('password')">👁️</span>
+              <div id="passwordError" class="error"></div>
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+            <a href="#" class="forgot-password">Forgotten password?</a>
+            <hr>
+            <a href="#" class="toggle-link" onclick="showSection('signupSection')">Don't have an account? Sign up</a>
+          </form>
+        </div>
+
+        <div id="signupSection" class="form-section">
+          <div class="signup-header active">
+            <h2>Create a new account</h2>
+            <p>It's quick and easy.</p>
+            <hr>
+          </div>
+          <form id="signupForm">
+            <div class="form-group">
+              <input type="text" id="username" placeholder="Username" required>
+              <div id="usernameError" class="error"></div>
+            </div>
+            <div class="form-group">
+              <input type="email" id="email" placeholder="Email" required>
+              <div id="emailError" class="error"></div>
+            </div>
+            <div class="form-group">
+              <input type="password" id="signupPassword" placeholder="Password" required>
+              <span class="password-toggle" onclick="togglePassword('signupPassword')">👁️</span>
+              <div id="signupPasswordError" class="error"></div>
+            </div>
+            <div class="form-group">
+              <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+              <span class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</span>
+              <div id="confirmPasswordError" class="error"></div>
+            </div>
+            <div class="form-group">
+              <input type="file" id="fileInput" accept="image/*">
+              <div id="fileInputError" class="error"></div>
+              <img id="imagePreview" style="display:none; margin-top:10px; width:80px; height:80px; border-radius: 50%; object-fit:cover;" />
+            </div>
+            <button type="submit" class="signup-btn">Sign Up</button>
+            <a href="#" class="toggle-link" onclick="showSection('loginSection')">Already have an account? Log In</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2025 Astrolite | All Rights Reserved.</div>
+
+  <script>
+    function showSection(sectionId) {
+      document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+      document.querySelector('.signup-header').classList.toggle('active', sectionId === 'signupSection');
+      clearErrors();
+    }
+
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      const toggle = input.parentElement.querySelector('.password-toggle');
+      if (input.type === "password") {
+        input.type = "text";
+        toggle.textContent = '👁️‍🗨️';
+      } else {
+        input.type = "password";
+        toggle.textContent = '👁️';
+      }
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.error').forEach(error => {
+        error.style.display = 'none';
+        error.textContent = '';
+      });
+    }
+
+    function validateForm(formId) {
+      clearErrors();
+      let isValid = true;
+
+      if (formId === 'loginForm') {
+        const emailPhone = document.getElementById('emailPhone').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!emailPhone || !password) {
+          document.getElementById('emailPhoneError').textContent = 'Email is required.';
+          document.getElementById('emailPhoneError').style.display = 'block';
+          isValid = false;
+        }
+
+      } else if (formId === 'signupForm') {
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('signupPassword').value.trim();
+        const confirmPassword = document.getElementById('confirmPassword').value.trim();
+        const fileInput = document.getElementById('fileInput').files[0];
+
+        if (!username || username.length < 3) {
+          document.getElementById('usernameError').textContent = 'Username must be at least 3 characters long.';
+          document.getElementById('usernameError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+          document.getElementById('emailError').textContent = 'Enter a valid email.';
+          document.getElementById('emailError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!password || password.length < 6) {
+          document.getElementById('signupPasswordError').textContent = 'Password must be at least 6 characters.';
+          document.getElementById('signupPasswordError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (password !== confirmPassword) {
+          document.getElementById('confirmPasswordError').textContent = 'Passwords do not match.';
+          document.getElementById('confirmPasswordError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!fileInput) {
+          document.getElementById('fileInputError').textContent = 'Please upload a profile image.';
+          document.getElementById('fileInputError').style.display = 'block';
+          isValid = false;
+        }
+      }
+
+      return isValid;
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (validateForm('signupForm')) {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('signupPassword').value.trim();
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userPassword', password);
+        alert('Sign up successful! Redirecting to login.');
+        showSection('loginSection');
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (validateForm('loginForm')) {
+        const emailPhone = document.getElementById('emailPhone').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const storedEmail = localStorage.getItem('userEmail');
+        const storedPassword = localStorage.getItem('userPassword');
+
+        if (emailPhone === storedEmail && password === storedPassword) {
+          localStorage.setItem('isAuthenticated', 'true');
+          window.location.href = 'index.html';
+        } else {
+          document.getElementById('passwordError').textContent = 'Incorrect email or password.';
+          document.getElementById('passwordError').style.display = 'block';
+        }
+      }
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function () {
+      const file = this.files[0];
+      const preview = document.getElementById('imagePreview');
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
